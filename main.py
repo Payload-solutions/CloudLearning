@@ -1,4 +1,5 @@
-
+from flask import Flask
+from app import app
 
 
 def main():
@@ -6,4 +7,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    app.run(port = 5000, debug = True)
