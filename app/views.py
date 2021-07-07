@@ -2,6 +2,6 @@ from app import app
 
 
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def home():
     pass
