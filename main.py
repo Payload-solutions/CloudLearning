@@ -1,5 +1,10 @@
-from flask import Flask
-from app import app
+
+from tensorflow.keras import (
+    layers,
+    models
+)
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.datasets import mnist
 
 
 def main():
@@ -7,4 +12,4 @@ def main():
 
 
 if __name__ == "__main__":
-    app.run(port = 5000, debug = True)
+    main()
