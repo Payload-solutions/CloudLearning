@@ -8,6 +8,7 @@ flask = "*"
 tensorflow = "*"
 pandas = "*"
 numpy = "*"
+scikit-learn = "*"
 
 [dev-packages]
 
