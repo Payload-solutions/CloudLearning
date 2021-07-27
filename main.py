@@ -2,7 +2,7 @@
 
 import pandas as pd
 import numpy as np
-
+import matplotlib.pyplot as plt
 from tensorflow.keras import (
     layers,
     models,
@@ -11,6 +11,9 @@ from tensorflow.keras import (
 
 from sklearn.model_selection import train_test_split
 from utils.utils import Utils
+from pprint import pprint
+
+
 
 
 def implementing_data():
@@ -41,9 +44,8 @@ def implementing_data():
     return train_data, test_data, y_train, y_test
 
 def defining_model(input_data: int, learning_rate_val: float):
-    
     model = models.Sequential()
-    model.add(layers.Dense(64, activation = "relu", input_shape = (input_data)))
+    model.add(layers.Dense(64, activation = "relu", input_shape = (input_data,)))
     model.add(layers.Dense(64, activation = "relu"))
 
     # as this result is a regression; is a continuous number, that's lineal
@@ -57,17 +59,16 @@ def defining_model(input_data: int, learning_rate_val: float):
     return model
 
 
-def train_network(train_data_size: int):
-    k_fold_validations = 4
-    num_val_samples = train_data_size // k_fold_validations
-    num_epochs = 80
-    all_histories = list()
-
-    value = 2 # validation data
+def train_network():
+    
 
 
-    # getting the data
     train_data, test_data, y_train, y_test = implementing_data()
+    k_fold_validations = 4
+
+    num_val_samples = len(train_data) // k_fold_validations
+    num_epochs = 500
+    all_histories = list()
 
     for i in range(k_fold_validations):
         print("Fold: %s"%i)
@@ -86,22 +87,32 @@ def train_network(train_data_size: int):
             y_train[(i+1)*num_val_samples:]
             ], axis = 0)
 
-        model = defining_model(0.001, 13)
+        model = defining_model(5, 0.001)
 
         history = model.fit(partial_train_data, partial_train_target, 
             epochs=num_epochs, 
-            batch_size=16, 
+            batch_size=16,
             validation_data=(val_data, val_target),
             verbose=0
         )
 
         all_histories.append(history.history["val_mae"])
 
-def main():
+    print("\n[*] All history: %s"%len(all_histories[0]))
+    print("\n\n[*] Viewing all histories\n")
+    pprint(all_histories)
+
+    all_mae_avg = pd.DataFrame(all_histories).mean(axis = 0)
     
+    plt.figure(figsize=(12,12))
+    plt.plot(range(1, len(all_mae_avg)+1), all_mae_avg)
+    plt.show()
+
+
+def main():
     # data already normalized
     # getting the data
-    pass
+    train_network()
 
 
 
