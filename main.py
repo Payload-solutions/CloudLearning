@@ -14,9 +14,7 @@ from utils.utils import Utils
 
 
 def implementing_data():
-    # utilities = Utils()
-    # print(utilities.load_from_csv("data/yogurt_dataset_nn.csv"))
-
+    
     data_master = pd.read_csv("data/beta_dataset.csv")
 
     y_strep = data_master["streptococcus_initial_strain_cfu_ml"]
@@ -62,14 +60,48 @@ def defining_model(input_data: int, learning_rate_val: float):
 def train_network(train_data_size: int):
     k_fold_validations = 4
     num_val_samples = train_data_size // k_fold_validations
-    epochs = 80
+    num_epochs = 80
     all_histories = list()
 
+    value = 2 # validation data
+
+
+    # getting the data
+    train_data, test_data, y_train, y_test = implementing_data()
+
+    for i in range(k_fold_validations):
+        print("Fold: %s"%i)
+        val_data = train_data[i*num_val_samples: (i+1)*num_val_samples]
+        val_target = y_train[i*num_val_samples: (i+1)*num_val_samples]
+
+        partial_train_data = np.concatenate(
+
+            [train_data[:i * num_val_samples],
+            train_data[(i+1)*num_val_samples:]
+            ], axis = 0)
+
+        partial_train_target = np.concatenate(
+
+            [y_train[:i * num_val_samples],
+            y_train[(i+1)*num_val_samples:]
+            ], axis = 0)
+
+        model = defining_model(0.001, 13)
+
+        history = model.fit(partial_train_data, partial_train_target, 
+            epochs=num_epochs, 
+            batch_size=16, 
+            validation_data=(val_data, val_target),
+            verbose=0
+        )
+
+        all_histories.append(history.history["val_mae"])
 
 def main():
     
     # data already normalized
-    train_data, test_data, y_train, y_test = implementing_data()
+    # getting the data
+    pass
 
 
 
