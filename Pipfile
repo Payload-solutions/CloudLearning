@@ -10,6 +10,9 @@ pandas = "*"
 numpy = "*"
 scikit-learn = "*"
 matplotlib = "*"
+flask-script = "*"
+flask-cqlalchemy = "*"
+click = "*"
 
 [dev-packages]
 

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e49ad2ea589f9b6181ba347e2f77c3dcf85e34508c71d05339083bc6d673267e"
+            "sha256": "30e3690583b95762b4dd29abf855516b6edaab21ecaa5752e464f6f1e6d3679b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -30,6 +30,12 @@
             ],
             "version": "==1.6.3"
         },
+        "blist": {
+            "hashes": [
+                "sha256:3a12c450b001bdf895b30ae818d4d6d3f1552096b8c995f0fe0c74bef04d1fc3"
+            ],
+            "version": "==1.3.6"
+        },
         "cachetools": {
             "hashes": [
                 "sha256:2cc0b89715337ab6dbba85b5b50effe2b0c74e035d83ee8ed637cf52f12ae001",
@@ -37,6 +43,29 @@
             ],
             "markers": "python_version ~= '3.5'",
             "version": "==4.2.2"
+        },
+        "cassandra-driver": {
+            "hashes": [
+                "sha256:1d50b92b88fbc8745fea3eaaf31bbfec7ffa90528c3a08951ed6ecd2d6642d93",
+                "sha256:3166d33d8c63991c349ed09a2ef31242a6eb48b588fc144f16a350e1b1335f29",
+                "sha256:3287f1e1f4aea6543221d418389e0708ad44650e7e2db70daa7beab701747a82",
+                "sha256:42e7870d9f770af9707ebb790df1f729a05b5dd9dc1865ebe84d225d13b6497e",
+                "sha256:66f347b6f0d208c894459e8389138b2eb07a7bc36b8dc7eea3b8ec62ca89d379",
+                "sha256:7ea4cf45e9e9fe7f9cf33ed4698e0592880563c642fa2d61879a1d6789fd45f0",
+                "sha256:8ad7d7c090eb1cac6110b3bfc1fd2d334ac62f415aac09350ebb8d241b7aa7ee",
+                "sha256:9202da218f1f6bc5dbc3e8079e9d9f88213aca2b3397908a6850fb3179ee86b4",
+                "sha256:94c12060b313c8a3ee6f6ce7293c3e99f100688c204f8c9c97877caf36287213",
+                "sha256:96829a7a5b9255e6ad1eef1c2558599a3b282330cbed3755c349762756425294",
+                "sha256:a11b1a7ae6f40d67f7258f162c1ddce1c6dc3e749ad4cb7f3cdb6b9bbdae5a9e",
+                "sha256:c2eff4ad029fe297b89487f7c5f29bd391786fd4a4ba51197030eb986cc18f9c",
+                "sha256:cc8431973235783a910e8e3864bdd2815194914e937ce6408d66d7a1c07eee78",
+                "sha256:ce452de8ed0440f75979f2a904b4c69181e422d08b6fd55a2b707817d311f3c1",
+                "sha256:cfb8f79268e58e9569f41457b670757add6a80b6325a848a6a59a1039f31022c",
+                "sha256:e37dd75fc2f3223b05b80aa72cc8a4b64a5e950a9ff9703ebcc20b134a6fd0eb",
+                "sha256:f3e80235d3949eadd273f0fc36ca4b9e7ed657007336f62b2e7e10321e322bfb",
+                "sha256:f80101afe711f5648c267a4657df6f5b1d77a317c985757a55689ed741c972e6"
+            ],
+            "version": "==3.25.0"
         },
         "certifi": {
             "hashes": [
@@ -58,7 +87,7 @@
                 "sha256:8c04c11192119b1ef78ea049e0a6f0463e4c48ef00a30160c704337586f3ad7a",
                 "sha256:fba402a4a47334742d782209a7c79bc448911afe1149d07bdabdf480b3e2f4b6"
             ],
-            "markers": "python_version >= '3.6'",
+            "index": "pypi",
             "version": "==8.0.1"
         },
         "cycler": {
@@ -76,6 +105,22 @@
             "index": "pypi",
             "version": "==2.0.1"
         },
+        "flask-cqlalchemy": {
+            "hashes": [
+                "sha256:170572cb05962c5a667df1b259156bc6d18198572f7a7f7b038c37a1d98c7152",
+                "sha256:87c5283e48384181470cb6da40272f5c9596a3600e5c4bf89968b1fa14aaf576",
+                "sha256:af0a0c8fd2c4bb722f8ce765b4fadf1cbd6a3829e90582f37c5801f3fa9cd5ad"
+            ],
+            "index": "pypi",
+            "version": "==1.2.0"
+        },
+        "flask-script": {
+            "hashes": [
+                "sha256:6425963d91054cfcc185807141c7314a9c5ad46325911bd24dcb489bd0161c65"
+            ],
+            "index": "pypi",
+            "version": "==2.0.6"
+        },
         "flatbuffers": {
             "hashes": [
                 "sha256:63bb9a722d5e373701913e226135b28a6f6ac200d5cc7b4d919fa38d73b44610",
@@ -90,6 +135,15 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==0.4.0"
+        },
+        "geomet": {
+            "hashes": [
+                "sha256:87ae0fc42e532b9e98969c0bbf895a5e0b2bb4f6f775cf51a74e6482f1f35c2b",
+                "sha256:91d754f7c298cbfcabd3befdb69c641c27fe75e808b27aa55028605761d17e95",
+                "sha256:a41a1e336b381416d6cbed7f1745c848e91defaa4d4c1bdc1312732e46ffad2b"
+            ],
+            "markers": "python_version >= '2.7' and python_version != '3.3' and python_version < '4'",
+            "version": "==0.2.1.post1"
         },
         "google-auth": {
             "hashes": [
