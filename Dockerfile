@@ -1,4 +1,4 @@
-FROM python:3.8.5
+FROM python:3.8.10
 
 RUN pip install --upgrade pip
 
@@ -9,6 +9,8 @@ ENV FLASK_APP manage.py
 ENV FLASK_RUN_HOST 0.0.0.0
 
 COPY requirements.txt requirements.txt
+
+RUN pip install -r requirements.txt
 
 EXPOSE 5000
 
