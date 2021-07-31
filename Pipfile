@@ -13,6 +13,8 @@ flask-script = "*"
 flask-cqlalchemy = "*"
 click = "*"
 joblib = "*"
+matplotlib = "*"
+seaborn = "*"
 
 [dev-packages]
 

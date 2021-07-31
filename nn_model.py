@@ -2,7 +2,6 @@
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from tensorflow.keras import (
     layers,
     models,
@@ -13,6 +12,8 @@ from sklearn.model_selection import train_test_split
 from utils.utils import Utils
 from pprint import pprint
 
+def forming_data():
+    pass
 
 def implementing_data():
     data_master = pd.read_csv("data/beta_dataset.csv")
@@ -98,10 +99,6 @@ def train_network():
     pprint(all_histories)
 
     all_mae_avg = pd.DataFrame(all_histories).mean(axis=0)
-
-    plt.figure(figsize=(12, 12))
-    plt.plot(range(1, len(all_mae_avg) + 1), all_mae_avg)
-    plt.show()
 
 
 def main():
