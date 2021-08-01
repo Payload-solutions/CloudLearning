@@ -18,7 +18,6 @@ class StreptococcusRegression:
 
     def spliting_data(self):
         y_strep = self.data_master["streptococcus_initial_strain_cfu_ml"]
-        # y_lact = data_master["lactobacillus_initial_strain_cfu_ml"]
 
         X = self.data_master.drop(["streptococcus_initial_strain_cfu_ml", "lactobacillus_initial_strain_cfu_ml", "quality_product", "ideal_temperature_c"], axis=1)
 
@@ -40,27 +39,20 @@ class StreptococcusRegression:
         return train_data, test_data, y_train, y_test
 
     def model_prediction(self, minimum_milk_proteins: float, titratable_acidity: float, pH_milk_sour: float, fat_milk_over_100mg_: float, target_data: float) -> str:
-        """[summary]
-
-        Returns:
-            [minimum_milk_proteins]: [2.591]
-            [titratable_acidity]: [0.992]
-            [pH_milk_sour]: [4.415]
-            [fat_milk_over_100mg_]: [3.1925]
-        """
+        
         loaded_model_json = None
         pred_range = None
-        if not os.path.exists("model.json"):
+        if not os.path.exists("strep_model.json"):
             model,_ = self.defining_model(4, 0.0155)
             pred_range = model.predict(np.array([minimum_milk_proteins, titratable_acidity, pH_milk_sour, fat_milk_over_100mg_]).reshape(1, -1))
         else:
-            with open("model.json", "r") as json_file:
+            with open("strep_model.json", "r") as json_file:
                 loaded_model_json = json_file.read()
     
             model_loaded = model_from_json(loaded_model_json)
 
             # Loading weigths
-            model_loaded.load_weights("model.h5")
+            model_loaded.load_weights("strep_model.h5")
 
             # Making another evaluation
             model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate= 0.0155),
@@ -95,7 +87,6 @@ class StreptococcusRegression:
         all_histories = list()
 
         for i in range(k_fold_validations):
-            print("Fold: %s"%i)
             val_data = train_data[i*num_val_samples: (i+1)*num_val_samples]
             val_target = y_train[i*num_val_samples: (i+1)*num_val_samples]
 
@@ -120,13 +111,13 @@ class StreptococcusRegression:
 
             all_histories.append(history.history["val_mae"])
 
-        if not os.path.exists("model.json"):
+        if not os.path.exists("strep_model.json"):
             # Serializing the model
             json_model = model.to_json()
-            with open("model.json", "w") as json_file:
+            with open("strep_model.json", "w") as json_file:
                 json_file.write(json_model)
 
             # Serializing the weights TO HDF5
-            model.save_weights("model.h5")
+            model.save_weights("strep_model.h5")
         return model, all_histories
 
