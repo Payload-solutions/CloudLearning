@@ -19,6 +19,14 @@ from tensorflow.keras.utils import (
 class NeuronClassification:
 
     def __init__(self, file_path: str, epochs_number: int, input_shape_val: int, output_shape_val: int) -> None:
+        """[summary]
+
+        Args:
+            file_path (str): [description]
+            epochs_number (int): [1000 it's the best for the model, to avoid overfitting and underfitting]
+            input_shape_val (int): [description]
+            output_shape_val (int): [description]
+        """
         self.data_master = pd.read_csv(file_path)
         self.epochs_number = epochs_number
         self.input_shape_val = input_shape_val
