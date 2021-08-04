@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 flask = "*"
-tensorflow = "*"
 pandas = "*"
 numpy = "*"
 scikit-learn = "*"
@@ -16,6 +15,7 @@ joblib = "*"
 matplotlib = "*"
 seaborn = "*"
 flask-cors = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 
