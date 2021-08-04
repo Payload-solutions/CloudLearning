@@ -1,8 +1,9 @@
-# from flask import Flask
-# from app import routes
+from flask import Flask
+
 # from app.models.streptococcus_regression
+from flask_cors import CORS
 
+app = Flask(__name__)
+CORS(app)
 
-# app = Flask(__name__)
-
-
+from app import routes

@@ -10,12 +10,8 @@ const Header = () => (
         <div className="header__menu">
             <div className="header__menu--profile">
                 <img src="" alt="" />
-                <p>Profile</p>
+                <a href="/about">About us</a>
             </div>
-            <ul>
-                <li><a href="">Account</a></li>
-                <li><a href="">Logout</a></li>
-            </ul>
         </div>
     </header>
 );

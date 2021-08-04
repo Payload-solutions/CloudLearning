@@ -1,18 +1,17 @@
 import React from 'react';
-import Header from '../components/Header';
-import Search from '../components/Search';
-import Footer from '../components/Footer'
+// import Header from '../components/Header';
+// import About from '../components/About';
+// import Footer from '../components/Footer'
+// import Values from '../components/Values';
 // import Catgories from '../components/Categories';
 // import Carousel from '../components/Carousel';
 // import CarouselItem from '../components/CarouselItem';
 // import Categories from '../components/Categories';
-import '../assets/styles/App.scss';
+//import '../assets/styles/App.scss';
 
 
 const Home = () => (
-    <div className="App">
-        <Header/>
-        <Search/>
+    <>
         {/* <Categories>
             <Carousel>
                 <CarouselItem/>
@@ -21,8 +20,7 @@ const Home = () => (
                 <CarouselItem/>
             </Carousel>
         </Categories> */}
-        <Footer/>
-    </div>
+    </>
 );
 
 export default Home;

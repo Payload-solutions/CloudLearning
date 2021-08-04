@@ -15,6 +15,7 @@ click = "*"
 joblib = "*"
 matplotlib = "*"
 seaborn = "*"
+flask-cors = "*"
 
 [dev-packages]
 
