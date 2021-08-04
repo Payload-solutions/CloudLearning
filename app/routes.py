@@ -9,6 +9,12 @@ def home():
     })
 
 
-@app.route("/neuron", methos=["GET", "POST"])
+@app.route("/neuron", methods=["GET", "POST"])
 def neuron_test():
     return "Something"
+
+@app.route("/test", methods=["GET"])
+def test_route():
+    return jsonify({
+        "name": "Arturo Negreiros"
+    })

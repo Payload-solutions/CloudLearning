@@ -1,6 +1,6 @@
 import React from 'react';
 import '../assets/styles/components/Header.scss'
-import logo from '../assets/static/deep.png'
+import logo from '../assets/static/otherlogo.png'
 // Presentational components, not logic
 // only presentation in html
 
