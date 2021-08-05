@@ -16,8 +16,10 @@ matplotlib = "*"
 seaborn = "*"
 flask-cors = "*"
 sqlalchemy = "*"
+tensorflow = "*"
+flask-sqlalchemy = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.8.10"
+python_version = "3.9.6"

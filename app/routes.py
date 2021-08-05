@@ -1,4 +1,4 @@
-from app import app 
+from app import app
 from flask import jsonify
 
 
@@ -13,8 +13,9 @@ def home():
 def neuron_test():
     return "Something"
 
+
 @app.route("/test", methods=["GET"])
 def test_route():
     return jsonify({
-        "data": [x for x in range(1,10)]
+        "data": [x for x in range(1, 10)]
     })

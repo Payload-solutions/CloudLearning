@@ -1,15 +1,9 @@
 
-import numpy as np
 import pandas as pd
-from pandas.core.algorithms import mode
-import seaborn as sns
 from tensorflow.keras import (
     models,
     layers
 )
-
-import matplotlib.pyplot as plt
-import os
 from tensorflow.keras.models import model_from_json
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import (
