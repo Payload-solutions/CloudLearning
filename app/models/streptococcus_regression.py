@@ -10,6 +10,33 @@ import numpy as np
 import os
 
 
+def make_predictions(test_values: list, target_values: list):
+    """
+    :param test_values: this need to be a list of list of floating values.
+    :param target_values: the goal to measure the accuracy.
+    :return: a dictionary object with the values inside.
+    """
+
+    try:
+        with open("model_training/strep_model.json", "r") as json_file:
+            loaded_model_json = json_file.read()
+
+        model_loaded = model_from_json(loaded_model_json)  # Model Loaded
+        model_loaded.load_weights("model_training/strep_model.h5")  # Loading model with its respective weights
+        model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
+                             loss="mse",
+                             metrics=["mae"])
+        predictions = model_loaded.predict(np.array(test_values))
+        return {
+            "predictions": predictions.tolist(),
+            "targets": target_values
+        }
+    except ValueError as e:
+        return {
+            "error_message": "Error by: {}".format(str(e))
+        }
+
+
 class StreptococcusRegression:
 
     def __init__(self, path: str) -> None:
@@ -38,39 +65,6 @@ class StreptococcusRegression:
         test_data = test_data / standard
 
         return train_data, test_data, y_train, y_test
-
-    def model_prediction(self, minimum_milk_proteins: float, titratable_acidity: float, pH_milk_sour: float,
-                         fat_milk_over_100mg_: float, target_data: float) -> str:
-
-        # loaded_model_json = None
-        # pred_range = None
-        histories = None
-        if not os.path.exists("model_training/strep_model.json"):
-            model, histories = self.defining_model(4, 0.0155)
-            all_mae_avg_strep = pd.DataFrame(histories).mean(axis = 0)
-            all_mae_avg_strep.to_csv("model_training/all_mae_avg_strep.csv",index=False)
-            pred_range = model.predict \
-                (np.array([minimum_milk_proteins, titratable_acidity, pH_milk_sour, fat_milk_over_100mg_]).reshape(1, -1))
-        else:
-            with open("model_training/strep_model.json", "r") as json_file:
-                loaded_model_json = json_file.read()
-
-            model_loaded = model_from_json(loaded_model_json)
-
-            # Loading weighs
-            model_loaded.load_weights("model_training/strep_model.h5")
-
-            # Making another evaluation
-            model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
-                                 loss="mse",
-                                 metrics=["mae"])
-            # model_loaded.predict()
-            pred_range = model_loaded.predict(np.array([minimum_milk_proteins, titratable_acidity, pH_milk_sour, fat_milk_over_100mg_]).reshape(1, -1))
-
-        return {
-            "prediction_range":"{0:.2f}%".format((target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format((pred_range[0][0] / target_data) * 100),
-            "mean_absolute_error":histories
-        }
 
     def defining_model(self, input_data: int, learning_rate_val: float):
         model = models.Sequential()
@@ -121,3 +115,34 @@ class StreptococcusRegression:
             # Serializing the weights TO HDF5
             model.save_weights("model_training/strep_model.h5")
         return model, all_histories
+
+    def model_prediction(self, values_list: list, target_data: float):
+
+        if not os.path.exists("model_training/strep_model.json"):
+            model, histories = self.defining_model(4, 0.0155)
+            all_mae_avg_strep = pd.DataFrame(histories).mean(axis=0)
+            all_mae_avg_strep.to_csv("model_training/all_mae_avg_strep.csv", index=False)
+            pred_range = model.predict(np.array(values_list).reshape(1, -1))
+        else:
+            with open("model_training/strep_model.json", "r") as json_file:
+                loaded_model_json = json_file.read()
+
+            model_loaded = model_from_json(loaded_model_json)
+
+            # Loading weighs
+            model_loaded.load_weights("model_training/strep_model.h5")
+
+            # Making another evaluation
+            model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
+                                 loss="mse",
+                                 metrics=["mae"])
+            # model_loaded.predict()
+            pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
+            histories = pd.read_csv("model_training/all_mae_avg_strep.csv")
+
+        return {
+            "prediction_range": "{0:.2f}%".format(
+                (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
+                (pred_range[0][0] / target_data) * 100),
+            "mean_absolute_error": [x for x in histories["0"].to_numpy()]
+        }
