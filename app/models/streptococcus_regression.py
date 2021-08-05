@@ -44,8 +44,11 @@ class StreptococcusRegression:
 
         # loaded_model_json = None
         # pred_range = None
+        histories = None
         if not os.path.exists("model_training/strep_model.json"):
-            model, _ = self.defining_model(4, 0.0155)
+            model, histories = self.defining_model(4, 0.0155)
+            all_mae_avg_strep = pd.DataFrame(histories).mean(axis = 0)
+            all_mae_avg_strep.to_csv("model_training/all_mae_avg_strep.csv",index=False)
             pred_range = model.predict \
                 (np.array([minimum_milk_proteins, titratable_acidity, pH_milk_sour, fat_milk_over_100mg_]).reshape(1, -1))
         else:
@@ -64,7 +67,10 @@ class StreptococcusRegression:
             # model_loaded.predict()
             pred_range = model_loaded.predict(np.array([minimum_milk_proteins, titratable_acidity, pH_milk_sour, fat_milk_over_100mg_]).reshape(1, -1))
 
-        return "{0:.2f}%".format((target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format((pred_range[0][0] / target_data) * 100)
+        return {
+            "prediction_range":"{0:.2f}%".format((target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format((pred_range[0][0] / target_data) * 100),
+            "mean_absolute_error":histories
+        }
 
     def defining_model(self, input_data: int, learning_rate_val: float):
         model = models.Sequential()

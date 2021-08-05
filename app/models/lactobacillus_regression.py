@@ -17,8 +17,8 @@ import os
 
 class LactobacillusRegression:
 
-    def __init__(self) -> None:
-        self.data_master = pd.read_csv("train_Data/beta_dataset.csv")
+    def __init__(self, path: str) -> None:
+        self.data_master = pd.read_csv(path)
 
     def split_data_lact(self):
         y_lact = self.data_master["lactobacillus_initial_strain_cfu_ml"]
@@ -90,7 +90,7 @@ class LactobacillusRegression:
         train_data_lact, _, train_label_lact, _ = self.split_data_lact()
 
         num_val_samples = len(train_data_lact) // k_fold_validations
-        num_epochs = 80
+        num_epochs = 90
         all_histories = list()
 
         for i in range(k_fold_validations):
