@@ -9,15 +9,12 @@ pandas = "*"
 numpy = "*"
 scikit-learn = "*"
 flask-script = "*"
-flask-cqlalchemy = "*"
 click = "*"
 joblib = "*"
 matplotlib = "*"
 seaborn = "*"
 flask-cors = "*"
-sqlalchemy = "*"
 tensorflow = "*"
-flask-sqlalchemy = "*"
 
 [dev-packages]
 

@@ -1,3 +1,4 @@
+"""
 from app import db
 
 
@@ -17,3 +18,5 @@ class YogurtData(db.Model):
 
 
 db.create_all()
+"""
+
