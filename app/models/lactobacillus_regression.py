@@ -34,7 +34,7 @@ def make_lact_predictions(test_values: list, target_values: list):
                              metrics=["mae"])
         predictions = model_loaded.predict(np.array(test_values))
         return {
-            "predictions": predictions.tolist(),
+            "predictions": [x[0] for x in predictions.tolist()],
             "targets": target_values
         }
     except ValueError as e:
