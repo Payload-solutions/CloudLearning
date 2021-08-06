@@ -1,3 +1,6 @@
+"""Precision level round 85%
+"""
+
 from tensorflow.keras import (
     models,
     layers,
@@ -22,7 +25,8 @@ def make_predictions(test_values: list, target_values: list):
             loaded_model_json = json_file.read()
 
         model_loaded = model_from_json(loaded_model_json)  # Model Loaded
-        model_loaded.load_weights("model_training/strep_model.h5")  # Loading model with its respective weights
+        # Loading model with its respective weights
+        model_loaded.load_weights("model_training/strep_model.h5")
         model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
                              loss="mse",
                              metrics=["mae"])
@@ -45,11 +49,11 @@ class StreptococcusRegression:
     def split_data(self):
         y_strep = self.data_master["streptococcus_initial_strain_cfu_ml"]
 
-        X = self.data_master.drop \
-            (["streptococcus_initial_strain_cfu_ml", "lactobacillus_initial_strain_cfu_ml", "quality_product",
-              "ideal_temperature_c"], axis=1)
+        X = self.data_master.drop(["streptococcus_initial_strain_cfu_ml", "lactobacillus_initial_strain_cfu_ml", "quality_product",
+                                   "ideal_temperature_c"], axis=1)
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y_strep, test_size=0.3, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y_strep, test_size=0.3, random_state=42)
 
         # Reshaping data
         train_data, test_data = X_train.to_numpy(), X_test.to_numpy()
@@ -85,8 +89,10 @@ class StreptococcusRegression:
         all_histories = list()
 
         for i in range(k_fold_validations):
-            val_data = train_data[i * num_val_samples: (i + 1) * num_val_samples]
-            val_target = y_train[i * num_val_samples: (i + 1) * num_val_samples]
+            val_data = train_data[i *
+                                  num_val_samples: (i + 1) * num_val_samples]
+            val_target = y_train[i *
+                                 num_val_samples: (i + 1) * num_val_samples]
 
             partial_train_data = np.concatenate(
                 [train_data[:i * num_val_samples],
@@ -106,39 +112,31 @@ class StreptococcusRegression:
 
             all_histories.append(history.history["val_mae"])
 
-        if not os.path.exists("model_training/strep_model.json"):
-            # Serializing the model
-            json_model = model.to_json()
-            with open("model_training/strep_model.json", "w") as json_file:
-                json_file.write(json_model)
+        json_model = model.to_json()
+        with open("model_training/strep_model.json", "w") as json_file:
+            json_file.write(json_model)
 
-            # Serializing the weights TO HDF5
-            model.save_weights("model_training/strep_model.h5")
+        # Serializing the weights TO HDF5
+        model.save_weights("model_training/strep_model.h5")
         return model, all_histories
 
     def model_prediction(self, values_list: list, target_data: float):
 
-        if not os.path.exists("model_training/strep_model.json"):
-            model, histories = self.defining_model(4, 0.0155)
-            all_mae_avg_strep = pd.DataFrame(histories).mean(axis=0)
-            all_mae_avg_strep.to_csv("model_training/all_mae_avg_strep.csv", index=False)
-            pred_range = model.predict(np.array(values_list).reshape(1, -1))
-        else:
-            with open("model_training/strep_model.json", "r") as json_file:
-                loaded_model_json = json_file.read()
+        with open("model_training/strep_model.json", "r") as json_file:
+            loaded_model_json = json_file.read()
 
-            model_loaded = model_from_json(loaded_model_json)
+        model_loaded = model_from_json(loaded_model_json)
 
-            # Loading weighs
-            model_loaded.load_weights("model_training/strep_model.h5")
+        # Loading weights
+        model_loaded.load_weights("model_training/strep_model.h5")
 
-            # Making another evaluation
-            model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
-                                 loss="mse",
-                                 metrics=["mae"])
-            # model_loaded.predict()
-            pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
-            histories = pd.read_csv("model_training/all_mae_avg_strep.csv")
+        # Making another evaluation
+        model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
+                             loss="mse",
+                             metrics=["mae"])
+
+        pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
+        histories = pd.read_csv("model_training/all_mae_avg_strep.csv")
 
         return {
             "prediction_range": "{0:.2f}%".format(

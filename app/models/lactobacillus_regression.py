@@ -15,6 +15,34 @@ import numpy as np
 import os
 
 
+def lactobacillus_predictions(test_values: list, target_values: list):
+    """
+    :param test_values: this need to be a list of list of floating values.
+    :param target_values: the goal to measure the accuracy.
+    :return: a dictionary object with the values inside.
+    """
+
+    try:
+        with open("model_training/lact_model.json", "r") as json_file:
+            loaded_model_json = json_file.read()
+
+        model_loaded = model_from_json(loaded_model_json)  # Model Loaded
+        # Loading model with its respective weights
+        model_loaded.load_weights("model_training/lact_model.h5")
+        model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
+                             loss="mse",
+                             metrics=["mae"])
+        predictions = model_loaded.predict(np.array(test_values))
+        return {
+            "predictions": predictions.tolist(),
+            "targets": target_values
+        }
+    except ValueError as e:
+        return {
+            "message": "Error by: {}".format(str(e))
+        }
+
+
 class LactobacillusRegression:
 
     def __init__(self, path: str) -> None:
@@ -27,7 +55,8 @@ class LactobacillusRegression:
             ["streptococcus_initial_strain_cfu_ml", "lactobacillus_initial_strain_cfu_ml", "quality_product",
              "ideal_temperature_c"], axis=1)
 
-        X_train, X_test, train_label_lact, test_label_lact = train_test_split(X, y_lact, test_size=0.3, random_state=42)
+        X_train, X_test, train_label_lact, test_label_lact = train_test_split(
+            X, y_lact, test_size=0.3, random_state=42)
         train_data_lact, test_data_lact = X_train.to_numpy(), X_test.to_numpy()
 
         # Normalizing train data
@@ -41,39 +70,6 @@ class LactobacillusRegression:
         test_data_lact = test_data_lact / standard
 
         return train_data_lact, test_data_lact, train_label_lact, test_label_lact
-
-    def model_prediction(self, minimum_milk_proteins: float, titratable_acidity: float, pH_milk_sour: float,
-                         fat_milk_over_100mg_: float, target_data: float) -> str:
-
-        # loaded_model_json = None
-        # pred_range = None
-        if not os.path.exists("model_training/lact_model.json"):
-            model, _ = self.defining_model_lact(4, 0.0155)
-            pred_range = model.predict(
-                np.array([minimum_milk_proteins, titratable_acidity, pH_milk_sour, fat_milk_over_100mg_]).reshape(1,
-                                                                                                                  -1))
-        else:
-            with open("model_training/lact_model.json", "r") as json_file:
-                loaded_model_json = json_file.read()
-
-            model_loaded = model_from_json(loaded_model_json)
-
-            # Loading weighs
-            model_loaded.load_weights("model_training/lact_model.h5")
-
-            # Making another evaluation
-            model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
-                                 loss="mse",
-                                 metrics=["mae"])
-
-            # model_loaded.predict()
-            pred_range = model_loaded.predict(
-                np.array([minimum_milk_proteins, titratable_acidity, pH_milk_sour, fat_milk_over_100mg_]).reshape(1,
-                                                                                                                  -1))
-
-        return "{0:.2f}%".format(
-            (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
-            (pred_range[0][0] / target_data) * 100)
 
     def defining_model_lact(self, input_data: int, learning_rate_val: float):
         model = models.Sequential()
@@ -94,8 +90,10 @@ class LactobacillusRegression:
         all_histories = list()
 
         for i in range(k_fold_validations):
-            val_data = train_data_lact[i * num_val_samples: (i + 1) * num_val_samples]
-            val_target = train_label_lact[i * num_val_samples: (i + 1) * num_val_samples]
+            val_data = train_data_lact[i *
+                                       num_val_samples: (i + 1) * num_val_samples]
+            val_target = train_label_lact[i *
+                                          num_val_samples: (i + 1) * num_val_samples]
 
             partial_train_data = np.concatenate(
                 [train_data_lact[:i * num_val_samples],
@@ -114,10 +112,34 @@ class LactobacillusRegression:
 
             all_histories.append(history.history["val_mae"])
 
-        if not os.path.exists("model_training/lact_model.json"):
-            json_model = model.to_json()
-            with open("model_training/lact_model.json", "w") as json_file:
-                json_file.write(json_model)
+        json_model = model.to_json()
+        with open("model_training/lact_model.json", "w") as json_file:
+            json_file.write(json_model)
 
-            model.save_weights("model_training/lact_model.h5")
+        model.save_weights("model_training/lact_model.h5")
         return model, all_histories
+
+    def model_prediction(self, values_list: list, target_data: float) -> str:
+
+        with open("model_training/lact_model.json", "r") as json_file:
+            loaded_model_json = json_file.read()
+
+        model_loaded = model_from_json(loaded_model_json)
+
+        # Loading weighs
+        model_loaded.load_weights("model_training/lact_model.h5")
+
+        # Making another evaluation
+        model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
+                             loss="mse",
+                             metrics=["mae"])
+
+        pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
+        histories = pd.read_csv("model_training/all_mae_avg_lact.csv")
+
+        return {
+            "prediction_range": "{0:.2f}%".format(
+                (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
+                (pred_range[0][0] / target_data) * 100),
+            "mean_absolute_error": [x for x in histories["0"].to_numpy()]
+        }

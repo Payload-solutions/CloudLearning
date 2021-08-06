@@ -11,6 +11,7 @@ from app.models.streptococcus_regression import (
 from app.models.lactobacillus_regression import LactobacillusRegression
 
 STREPTOCOCCUS_METRICS = StreptococcusRegression(path="data/beta_dataset.csv")
+LACTOBACILLUS_METRICS = LactobacillusRegression(path="data/beta_dataset.csv")
 
 
 @app.route("/", methods=["GET"])
@@ -66,8 +67,8 @@ def lact_pred():
             "columns": [x for x in dataset.columns]
         })
     else:
-        lactobacillus_metrics = LactobacillusRegression(path="data/beta_dataset.csv")
-        prediction = lactobacillus_metrics.model_prediction(minimum_milk_proteins=2.591,
+
+        prediction = LACTOBACILLUS_METRICS.model_prediction(minimum_milk_proteins=2.591,
                                                             titratable_acidity=0.992,
                                                             pH_milk_sour=4.415,
                                                             fat_milk_over_100mg_=3.1925,
