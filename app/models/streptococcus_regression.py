@@ -13,7 +13,7 @@ import numpy as np
 import os
 
 
-def make_predictions(test_values: list, target_values: list):
+def make_strep_predictions(test_values: list, target_values: list):
     """
     :param test_values: this need to be a list of list of floating values.
     :param target_values: the goal to measure the accuracy.
@@ -45,6 +45,9 @@ class StreptococcusRegression:
 
     def __init__(self, path: str) -> None:
         self.data_master = pd.read_csv(path)
+        
+        if not os.path.exists("model_training/strep_model.json"):
+            self.defining_model_strep(4, 0.0155)
 
     def split_data(self):
         y_strep = self.data_master["streptococcus_initial_strain_cfu_ml"]
@@ -70,7 +73,8 @@ class StreptococcusRegression:
 
         return train_data, test_data, y_train, y_test
 
-    def defining_model(self, input_data: int, learning_rate_val: float):
+    def defining_model_strep(self, input_data: int, learning_rate_val: float) -> None:
+
         model = models.Sequential()
         model.add(layers.Dense(16, activation="relu", input_shape=(input_data,)))
         model.add(layers.Dense(16, activation="relu"))
@@ -118,7 +122,8 @@ class StreptococcusRegression:
 
         # Serializing the weights TO HDF5
         model.save_weights("model_training/strep_model.h5")
-        return model, all_histories
+        pd.DataFrame(all_histories).mean(axis=0).to_csv("model_training/all_mae_avg_strep.csv", index=False)
+        # return model, all_histories
 
     def model_prediction(self, values_list: list, target_data: float):
 

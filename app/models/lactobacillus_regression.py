@@ -15,7 +15,7 @@ import numpy as np
 import os
 
 
-def lactobacillus_predictions(test_values: list, target_values: list):
+def make_lact_predictions(test_values: list, target_values: list):
     """
     :param test_values: this need to be a list of list of floating values.
     :param target_values: the goal to measure the accuracy.
@@ -47,6 +47,9 @@ class LactobacillusRegression:
 
     def __init__(self, path: str) -> None:
         self.data_master = pd.read_csv(path)
+
+        if not os.path.exists("model_training/lact_model.json"):
+            self.defining_model_lact(4, 0.0155)
 
     def split_data_lact(self):
         y_lact = self.data_master["lactobacillus_initial_strain_cfu_ml"]
@@ -117,9 +120,9 @@ class LactobacillusRegression:
             json_file.write(json_model)
 
         model.save_weights("model_training/lact_model.h5")
-        return model, all_histories
+        pd.DataFrame(all_histories).mean(axis=0).to_csv("model_training/all_mae_avg_lact.csv", index=False)
 
-    def model_prediction(self, values_list: list, target_data: float) -> str:
+    def model_prediction(self, values_list: list, target_data: float):
 
         with open("model_training/lact_model.json", "r") as json_file:
             loaded_model_json = json_file.read()
