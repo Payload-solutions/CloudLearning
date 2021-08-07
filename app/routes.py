@@ -12,7 +12,10 @@ from app.models.lactobacillus_regression import (
     LactobacillusRegression,
     make_lact_predictions
 )
-from app.models.neuron_classification import NeuronClassification
+from app.models.neuron_classification import (
+    measure_single_predictions,
+    measure_list_predictions
+)
 
 import unittest
 import numpy as np
@@ -36,8 +39,12 @@ def index():
 @app.run("/bacteria_growth", methods=["GET"])
 def bacteria_growth():
 
-    bacteria_data = pd.read_csv("train/growth_curve.csv")
-
+    bacteria_data = pd.read_csv("data/growth_curve.csv")
+    return jsonify({
+        "message": "Something",
+        "growth_time": bacteria_data["time"].to_list(),
+        "growth_log": bacteria_data["growth_log"].to_list()
+    })
 
 
 """
@@ -118,19 +125,44 @@ Neuron classification
 """
 
 
-@app.route("/classification", methods=["GET", "POST"])
+@app.route("/classification_single", methods=["GET", "POST"])
 def classification():
-
-    model_class = NeuronClassification(file_path="train/classification_data.csv",
-                                       epochs_number=1000,
-                                       input_shape_val=9,
-                                       output_shape_val=3)
-
+    """In this endpoint the goal is sent a single values"""
+    
     if request.method == "POST":
-        features_data = request.json["features_data"]
-        target_data = request.json["target_data"]
+        features_data = np.array(request.json["features_data"]).reshape(1, -1)
+        # target_data = np.array(request.json["target_data"])
+        model_class = measure_single_predictions(features_data)
+        return jsonify({
+            "message":"successfully",
+            "status_code": 200,
+            "predictions": model_class
+        })
     else:
-        pass
+        return jsonify({
+            "message": "Error in the request",
+            "status_code": 404
+        })
+
+@app.route("/classification_multiple", methods=["GET", "POST"])
+def classification():
+    """In this endpoint the goal is sent a single values"""
+    
+    if request.method == "POST":
+        features_data = np.array(request.json["features_data"])
+        # target_data = np.array(request.json["target_data"])
+        model_class = measure_list_predictions(features_data)
+        return jsonify({
+            "message":"successfully",
+            "status_code": 200,
+            "predictions": model_class
+        })
+
+    else:
+        return jsonify({
+            "message": "Error in the request",
+            "status_code": 404
+        })
 
 
 """

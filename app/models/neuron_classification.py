@@ -2,6 +2,7 @@ import json
 from typing import Any
 from numpy.core.fromnumeric import shape
 import pandas as pd
+from pandas.core.algorithms import mode
 from tensorflow.keras import (
     models,
     layers
@@ -15,9 +16,102 @@ import os
 import numpy as np
 
 
+# single prediction
+def measure_single_predictions(features_value: np.ndarray) -> Any:
+
+    MEASURES = {
+        0: "Low fat yogurt",
+        1: "Non fat yogurt", 
+        2: "Regular yogurt", 
+    }
+
+    try:
+
+        if features_value.shape == (len(features_value), 9) or features_value.shape == (1, 9):
+
+            with open("model_training/classification_model.json") as json_file:
+                loaded_model = json_file.read()
+
+            model_loaded = model_from_json(loaded_model)
+
+            # Loading weights
+            model_loaded.load_weights("model_training/classification_weights.h5")
+
+            # making another evaluation
+            model_loaded.compile(optimizer="rmsprop",
+                                loss="categorical_crossentropy",
+                                metrics=["accuracy"])
+
+            # accuracy prediction
+            # accuracy_metric = float("{0:.2f}".format(model_loaded.evaluate(np.array(features_value), np.array(target_value))[1] * 100))
+            prediction = model_loaded.predict(features_value)
+            with open("model_training/classification_history.json", "r") as json_file:
+                value = json.load(json_file)
+                # print(value.keys())
+            return {
+                "accuracy_metrics": MEASURES[np.argmax(prediction)],
+                "values": value
+            }
+
+        else:
+            raise ValueError("The dimension in the features is not the right")
+    except ValueError as e:
+        return {
+            "message": "Error by: {}".format(str(e))
+        }
+
+# single prediction
+def measure_list_predictions(features_value: np.ndarray) -> Any:
+
+    MEASURES = {
+        0: "Low fat yogurt",
+        1: "Non fat yogurt", 
+        2: "Regular yogurt", 
+    }
+
+    try:
+
+        if features_value.shape == (len(features_value), 9) or features_value.shape == (1, 9):
+
+            with open("model_training/classification_model.json") as json_file:
+                loaded_model = json_file.read()
+
+            model_loaded = model_from_json(loaded_model)
+
+            # Loading weights
+            model_loaded.load_weights("model_training/classification_weights.h5")
+
+            # making another evaluation
+            model_loaded.compile(optimizer="rmsprop",
+                                loss="categorical_crossentropy",
+                                metrics=["accuracy"])
+
+            # accuracy prediction
+            # accuracy_metric = float("{0:.2f}".format(model_loaded.evaluate(np.array(features_value), np.array(target_value))[1] * 100))
+            prediction = model_loaded.predict(features_value)
+            with open("model_training/classification_history.json", "r") as json_file:
+                value = json.load(json_file)
+                # print(value.keys())
+            return {
+                "accuracy_metrics": [MEASURES[np.argmax(x)] for x in prediction],
+                "values": value
+            }
+
+        else:
+            raise ValueError("The dimension in the features is not the right")
+    except ValueError as e:
+        return {
+            "message": "Error by: {}".format(str(e))
+        }
+
+
+
+
+
+
 class NeuronClassification:
 
-    def __init__(self, file_path: str, epochs_number: int, input_shape_val: int, output_shape_val: int) -> None:
+    def __init__(self, epochs_number: int, input_shape_val: int, output_shape_val: int) -> None:
         """[summary]
 
         Args:
@@ -26,7 +120,7 @@ class NeuronClassification:
             input_shape_val (int): [description]
             output_shape_val (int): [description]
         """
-        self.data_master = pd.read_csv(file_path)
+        self.data_master = pd.read_csv("train/classification_data.csv")
         self.epochs_number = epochs_number
         self.input_shape_val = input_shape_val
         self.output_shape_val = output_shape_val
@@ -87,35 +181,3 @@ class NeuronClassification:
         with open("model_training/classification_history.json", "w") as history_file:
             json.dump(history.history, history_file)
 
-    def measure_predictions(self, features_value: np.ndarray, target_value: np.ndarray) -> Any:
-
-        try:
-
-            if features_value.shape == (len(features_value), 9) or features_value.shape == (1, 9):
-
-                with open("model_training/classification_model.json") as json_file:
-                    loaded_model = json_file.read()
-
-                model_loaded = model_from_json(loaded_model)
-
-                # Loading weights
-                model_loaded.load_weights("model_training/classification_weights.h5")
-
-                # making another evaluation
-                model_loaded.compile(optimizer="rmsprop",
-                                    loss="categorical_crossentropy",
-                                    metrics=["accuracy"])
-
-                # accuracy prediction
-                accuracy_metric = float("{0:.2f}".format(model_loaded.evaluate(np.array(features_value), np.array(target_value))[1] * 100))
-
-                return {
-                    "accuracy_metrics": accuracy_metric,
-                }
-
-            else:
-                raise ValueError("The dimension in the features is not the right")
-        except ValueError as e:
-            return {
-                "message": "Error by: {}".format(str(e))
-            }
