@@ -9,10 +9,9 @@ from app.models.streptococcus_regression import StreptococcusRegression
 NeuronClassification(epochs_number=1000,
                      input_shape_val=9,
                      output_shape_val=3)
-
-streptococcus_metrics = StreptococcusRegression(
+StreptococcusRegression(
     path="data/beta_dataset.csv")
-lactobacillus_metrics = LactobacillusRegression(
+LactobacillusRegression(
         path="data/beta_dataset.csv")
 
 app = Flask(__name__)

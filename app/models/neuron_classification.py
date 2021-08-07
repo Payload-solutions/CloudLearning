@@ -44,7 +44,6 @@ def measure_single_predictions(features_value: np.ndarray) -> Any:
             prediction = model_loaded.predict(features_value)
             with open("model_training/classification_history.json", "r") as json_file:
                 value = json.load(json_file)
-                # print(value.keys())
             return {
                 "accuracy_metrics": MEASURES[np.argmax(prediction)],
                 "values": value
@@ -88,7 +87,6 @@ def measure_list_predictions(features_value: np.ndarray) -> Any:
             prediction = model_loaded.predict(features_value)
             with open("model_training/classification_history.json", "r") as json_file:
                 value = json.load(json_file)
-                # print(value.keys())
             return {
                 "accuracy_metrics": [MEASURES[np.argmax(x)] for x in prediction],
                 "values": value
@@ -112,7 +110,7 @@ class NeuronClassification:
             input_shape_val (int): [description]
             output_shape_val (int): [description]
         """
-        self.data_master = pd.read_csv("train/classification_data.csv")
+        self.data_master = pd.read_csv("data/classification_data.csv")
         self.epochs_number = epochs_number
         self.input_shape_val = input_shape_val
         self.output_shape_val = output_shape_val
@@ -159,7 +157,6 @@ class NeuronClassification:
                             batch_size=512, verbose=False,
                             validation_data=(x_val, y_val))
         json_model = model.to_json()
-        print(history.history)
 
         # saving the classification model
         with open("model_training/classification_model.json", "w") as json_file:

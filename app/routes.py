@@ -27,13 +27,15 @@ def tst():
     unittest.TextTestRunner().run(tests)
 
 
-@app.run("/bacteria_growth", methods=["GET"])
+@app.route("/bacteria_growth", methods=["GET"])
 def bacteria_growth():
     bacteria_data = pd.read_csv("data/growth_curve.csv")
     return jsonify({
-        "message": "Something",
-        "growth_time": bacteria_data["time"].to_list(),
-        "growth_log": bacteria_data["growth_log"].to_list()
+        "data": {
+            "message": "Something",
+            "growth_time": bacteria_data["time"].to_list(),
+            "growth_log": bacteria_data["growth_log"].to_list()
+        }
     })
 
 
@@ -112,7 +114,7 @@ Neuron classification
 
 
 @app.route("/classification_single", methods=["GET", "POST"])
-def classification():
+def classification_single():
     """In this endpoint the goal is sent a single values"""
 
     if request.method == "POST":
@@ -132,7 +134,7 @@ def classification():
 
 
 @app.route("/classification_multiple", methods=["GET", "POST"])
-def classification():
+def classification_multiple():
     """In this endpoint the goal is sent a single values"""
 
     if request.method == "POST":
