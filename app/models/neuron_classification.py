@@ -12,19 +12,22 @@ from tensorflow.keras.utils import (
 )
 import os
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 
+with open("model_training/classification_history.json", "r") as json_file:
+    value = json.load(json_file)
 
-# single prediction
-def measure_single_predictions(features_value: np.ndarray) -> Any:
-    MEASURES = {
+MEASURES = {
         0: "Low fat yogurt",
         1: "Non fat yogurt",
         2: "Regular yogurt",
-    }
+}
 
+
+# single prediction
+def measure_single_predictions(features_value= None) -> Any:
     try:
-
-        if features_value.shape == (len(features_value), 9) or features_value.shape == (1, 9):
+        if features_value is not None:
 
             with open("model_training/classification_model.json") as json_file:
                 loaded_model = json_file.read()
@@ -39,18 +42,16 @@ def measure_single_predictions(features_value: np.ndarray) -> Any:
                                  loss="categorical_crossentropy",
                                  metrics=["accuracy"])
 
-            # accuracy prediction
-            # accuracy_metric = float("{0:.2f}".format(model_loaded.evaluate(np.array(features_value), np.array(target_value))[1] * 100))
             prediction = model_loaded.predict(features_value)
-            with open("model_training/classification_history.json", "r") as json_file:
-                value = json.load(json_file)
+            
             return {
-                "accuracy_metrics": MEASURES[np.argmax(prediction)],
-                "values": value
+                "accuracy_metrics": MEASURES[np.argmax(prediction)]
             }
 
         else:
-            raise ValueError("The dimension in the features is not the right")
+            return {
+                "values":value
+                }
     except ValueError as e:
         return {
             "message": "Error by: {}".format(str(e))
@@ -58,17 +59,12 @@ def measure_single_predictions(features_value: np.ndarray) -> Any:
 
 
 # single prediction
-def measure_list_predictions(features_value: np.ndarray) -> Any:
-    MEASURES = {
-        0: "Low fat yogurt",
-        1: "Non fat yogurt",
-        2: "Regular yogurt",
-    }
-
+def measure_list_predictions(features_value=None, targets_value=None) -> Any:
     try:
 
-        if features_value.shape == (len(features_value), 9) or features_value.shape == (1, 9):
-
+        if (features_value is not None) and (targets_value is not None):
+            
+            features_value = np.array(features_value)
             with open("model_training/classification_model.json") as json_file:
                 loaded_model = json_file.read()
 
@@ -85,15 +81,19 @@ def measure_list_predictions(features_value: np.ndarray) -> Any:
             # accuracy prediction
             # accuracy_metric = float("{0:.2f}".format(model_loaded.evaluate(np.array(features_value), np.array(target_value))[1] * 100))
             prediction = model_loaded.predict(features_value)
-            with open("model_training/classification_history.json", "r") as json_file:
-                value = json.load(json_file)
+            tensor_target = to_categorical(LabelEncoder().fit_transform(targets_value))
+
+            accuracy_val = model_loaded.evaluate(features_value, tensor_target)
+
             return {
-                "accuracy_metrics": [MEASURES[np.argmax(x)] for x in prediction],
-                "values": value
+                "predictions": [MEASURES[np.argmax(x)] for x in prediction],
+                "accuracy": "{0:.2f}%".format(accuracy_val[1]*100),
             }
 
         else:
-            raise ValueError("The dimension in the features is not the right")
+            return {
+                "values":value
+                }
     except ValueError as e:
         return {
             "message": "Error by: {}".format(str(e))

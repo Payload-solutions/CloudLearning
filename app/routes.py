@@ -132,7 +132,7 @@ def classification_single():
     """In this endpoint the goal is sent a single values"""
 
     if request.method == "POST":
-        features_data = np.array(request.json["features_data"]).reshape(1, -1)
+        features_data = np.array(request.json["classification_data"]).reshape(1, -1)
         # target_data = np.array(request.json["target_data"])
         model_class = measure_single_predictions(features_data)
         return jsonify({
@@ -141,22 +141,29 @@ def classification_single():
             "predictions": model_class
         })
     elif request.method == "GET":
-        response = make_response(redirect("/bacteria_growth"))
-        return response
+        return jsonify({
+            "data": measure_single_predictions()
+        })
 
 
 @app.route("/classification_multiple", methods=["GET", "POST"])
 def classification_multiple():
-    """In this endpoint the goal is sent a single values"""
 
+    
+    
     if request.method == "POST":
-        features_data = np.array(request.json["features_data"])
-        model_class = measure_list_predictions(features_data)
+        features_data = request.json["classification_data"]
+        target_data = request.json["predictions"]
+    
+        model_class = measure_list_predictions(features_value=features_data, targets_value=target_data)
         return jsonify({
             "message": "successfully",
             "status_code": 200,
             "predictions": model_class
         })
     elif request.method == "GET":
-        response = make_response(redirect("/bacteria_growth"))
-        return response
+        return jsonify({
+            "message": "successfully",
+            "status_code": 200,
+            "predictions": measure_list_predictions()
+        })
