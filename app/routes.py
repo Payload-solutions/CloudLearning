@@ -12,9 +12,10 @@ from app.models.lactobacillus_regression import (
     LactobacillusRegression,
     make_lact_predictions
 )
+from app.models.neuron_classification import NeuronClassification
+
 import unittest
 import numpy as np
-
 
 
 @app.cli.command()
@@ -22,9 +23,27 @@ def tst():
     tests = unittest.TestLoader().discover("tests")
     unittest.TextTestRunner().run(tests)
 
+
+
+@app.run("/", methods=["GET"])
+def index():
+
+    return jsonify({
+        
+    })
+
+
+@app.run("/bacteria_growth", methods=["GET"])
+def bacteria_growth():
+
+    bacteria_data = pd.read_csv("train/growth_curve.csv")
+
+
+
 """
 Neuron Regression
 """
+
 
 @app.route("/strep", methods=["GET", "POST"])
 def strep_pred():
@@ -94,7 +113,6 @@ def list_lact_pred():
         })
 
 
-
 """
 Neuron classification
 """
@@ -102,15 +120,17 @@ Neuron classification
 
 @app.route("/classification", methods=["GET", "POST"])
 def classification():
+
+    model_class = NeuronClassification(file_path="train/classification_data.csv",
+                                       epochs_number=1000,
+                                       input_shape_val=9,
+                                       output_shape_val=3)
+
     if request.method == "POST":
         features_data = request.json["features_data"]
         target_data = request.json["target_data"]
     else:
         pass
-
-
-
-
 
 
 """
