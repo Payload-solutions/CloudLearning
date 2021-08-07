@@ -1,7 +1,9 @@
 from app import app
 from flask import (
     jsonify,
-    request
+    request,
+    make_response,
+    redirect
 )
 import pandas as pd
 from app.models.streptococcus_regression import (
@@ -19,6 +21,9 @@ from app.models.neuron_classification import (
 
 import unittest
 import numpy as np
+
+"""In every GET petitions the data trained and 
+    the history metrics will be sent"""
 
 
 @app.cli.command()
@@ -46,9 +51,9 @@ Neuron Regression
 
 @app.route("/strep", methods=["GET", "POST"])
 def strep_pred():
+    strep_model = single_strep_predictions(
+        values_list=[2.591, 0.992, 4.415, 3.1925], target_data=4.106)
     if request.method == "POST":
-        strep_model = single_strep_predictions(
-            values_list=[2.591, 0.992, 4.415, 3.1925], target_data=4.106)
         return jsonify({
             "data": {
                 "message": "request successfully",
@@ -56,19 +61,45 @@ def strep_pred():
                 "mean_absolute_error": strep_model["mean_absolute_error"]
             }
         })
+    elif request.method == "GET":
+        return jsonify({
+            "data": {
+                "message": "request successfully",
+                "mean_absolute_error": strep_model["mean_absolute_error"]
+            }
+        })
+    else:
+        return jsonify({
+            "status": "BAD REQUEST",
+            "status_message": "METHOD NOT ALLOWED",
+            "status_code": 405
+        })
 
 
 @app.route("/lact", methods=["GET", "POST"])
 def lact_pred():
+    lact_model = single_lact_predictions(
+        values_list=[2.591, 0.992, 4.415, 3.1925], target_data=5.196)
     if request.method == "POST":
-        lact_model = single_lact_predictions(
-            values_list=[2.591, 0.992, 4.415, 3.1925], target_data=5.196)
         return jsonify({
             "data": {
                 "message": "request successfully",
                 "prediction": lact_model["prediction_range"],
                 "mean_absolute_error": lact_model["mean_absolute_error"]
             }
+        })
+    elif request.method == "GET":
+        return jsonify({
+            "data": {
+                "message": "request successfully",
+                "mean_absolute_error": lact_model["mean_absolute_error"]
+            }
+        })
+    else:
+        return jsonify({
+            "status": "BAD REQUEST",
+            "status_message": "METHOD NOT ALLOWED",
+            "status_code": 405
         })
 
 
@@ -87,9 +118,8 @@ def list_strep_pred():
             "data": values_predicted
         })
     else:
-        return jsonify({
-            "message": "you will be redirect to another page!!"
-        })
+        response = make_response(redirect("/bacteria_growth"))
+        return response
 
 
 @app.route("/list_lact", methods=["GET", "POST"])
@@ -102,10 +132,8 @@ def list_lact_pred():
             "data": values_predicted
         })
     else:
-        return jsonify({
-            "message": "you suck!!",
-            "status_code": 404
-        })
+        response = make_response(redirect("/bacteria_growth"))
+        return response
 
 
 """
@@ -127,10 +155,8 @@ def classification_single():
             "predictions": model_class
         })
     else:
-        return jsonify({
-            "message": "Error in the request",
-            "status_code": 404
-        })
+        response = make_response(redirect("/bacteria_growth"))
+        return response
 
 
 @app.route("/classification_multiple", methods=["GET", "POST"])
@@ -146,12 +172,9 @@ def classification_multiple():
             "status_code": 200,
             "predictions": model_class
         })
-
     else:
-        return jsonify({
-            "message": "Error in the request",
-            "status_code": 404
-        })
+        response = make_response(redirect("/bacteria_growth"))
+        return response
 
 
 """
