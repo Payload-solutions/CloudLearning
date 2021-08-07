@@ -1,8 +1,6 @@
 import json
 from typing import Any
-from numpy.core.fromnumeric import shape
 import pandas as pd
-from pandas.core.algorithms import mode
 from tensorflow.keras import (
     models,
     layers
@@ -18,11 +16,10 @@ import numpy as np
 
 # single prediction
 def measure_single_predictions(features_value: np.ndarray) -> Any:
-
     MEASURES = {
         0: "Low fat yogurt",
-        1: "Non fat yogurt", 
-        2: "Regular yogurt", 
+        1: "Non fat yogurt",
+        2: "Regular yogurt",
     }
 
     try:
@@ -39,8 +36,8 @@ def measure_single_predictions(features_value: np.ndarray) -> Any:
 
             # making another evaluation
             model_loaded.compile(optimizer="rmsprop",
-                                loss="categorical_crossentropy",
-                                metrics=["accuracy"])
+                                 loss="categorical_crossentropy",
+                                 metrics=["accuracy"])
 
             # accuracy prediction
             # accuracy_metric = float("{0:.2f}".format(model_loaded.evaluate(np.array(features_value), np.array(target_value))[1] * 100))
@@ -60,13 +57,13 @@ def measure_single_predictions(features_value: np.ndarray) -> Any:
             "message": "Error by: {}".format(str(e))
         }
 
+
 # single prediction
 def measure_list_predictions(features_value: np.ndarray) -> Any:
-
     MEASURES = {
         0: "Low fat yogurt",
-        1: "Non fat yogurt", 
-        2: "Regular yogurt", 
+        1: "Non fat yogurt",
+        2: "Regular yogurt",
     }
 
     try:
@@ -83,8 +80,8 @@ def measure_list_predictions(features_value: np.ndarray) -> Any:
 
             # making another evaluation
             model_loaded.compile(optimizer="rmsprop",
-                                loss="categorical_crossentropy",
-                                metrics=["accuracy"])
+                                 loss="categorical_crossentropy",
+                                 metrics=["accuracy"])
 
             # accuracy prediction
             # accuracy_metric = float("{0:.2f}".format(model_loaded.evaluate(np.array(features_value), np.array(target_value))[1] * 100))
@@ -105,17 +102,12 @@ def measure_list_predictions(features_value: np.ndarray) -> Any:
         }
 
 
-
-
-
-
 class NeuronClassification:
 
     def __init__(self, epochs_number: int, input_shape_val: int, output_shape_val: int) -> None:
         """[summary]
 
         Args:
-            file_path (str): [description]
             epochs_number (int): [1000 it's the best for the model, to avoid overfitting and underfitting]
             input_shape_val (int): [description]
             output_shape_val (int): [description]
@@ -149,7 +141,6 @@ class NeuronClassification:
         return train_data, test_data, train_labels, test_labels
 
     def _defining_model(self) -> None:
-
         x_val = self.train_data[:int(len(self.train_data) * 0.32)]
         partial_x_train = self.train_data[int(len(self.train_data) * 0.32):]
 
@@ -180,4 +171,3 @@ class NeuronClassification:
         # saving the history variable
         with open("model_training/classification_history.json", "w") as history_file:
             json.dump(history.history, history_file)
-

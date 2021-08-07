@@ -1,21 +1,22 @@
 from flask import Flask
 # from app.models.streptococcus_regression
 from flask_cors import CORS
+
+from app.models.lactobacillus_regression import LactobacillusRegression
 from app.models.neuron_classification import NeuronClassification
+from app.models.streptococcus_regression import StreptococcusRegression
 
 NeuronClassification(epochs_number=1000,
-                    input_shape_val=9,
-                    output_shape_val=3)
+                     input_shape_val=9,
+                     output_shape_val=3)
 
-
-
+streptococcus_metrics = StreptococcusRegression(
+    path="data/beta_dataset.csv")
+lactobacillus_metrics = LactobacillusRegression(
+        path="data/beta_dataset.csv")
 
 app = Flask(__name__)
-# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root_payload:@localhost/DeepTraining"
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db = SQLAlchemy(app)
 CORS(app)
-
 
 # import features
 from app import routes

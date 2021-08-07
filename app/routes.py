@@ -5,12 +5,12 @@ from flask import (
 )
 import pandas as pd
 from app.models.streptococcus_regression import (
-    StreptococcusRegression,
-    make_strep_predictions
+    list_strep_predictions,
+    single_strep_predictions
 )
 from app.models.lactobacillus_regression import (
-    LactobacillusRegression,
-    make_lact_predictions
+    single_lact_predictions,
+    list_lact_predictions
 )
 from app.models.neuron_classification import (
     measure_single_predictions,
@@ -27,18 +27,8 @@ def tst():
     unittest.TextTestRunner().run(tests)
 
 
-
-@app.run("/", methods=["GET"])
-def index():
-
-    return jsonify({
-        
-    })
-
-
 @app.run("/bacteria_growth", methods=["GET"])
 def bacteria_growth():
-
     bacteria_data = pd.read_csv("data/growth_curve.csv")
     return jsonify({
         "message": "Something",
@@ -54,10 +44,8 @@ Neuron Regression
 
 @app.route("/strep", methods=["GET", "POST"])
 def strep_pred():
-    streptococcus_metrics = StreptococcusRegression(
-        path="data/beta_dataset.csv")
     if request.method == "POST":
-        strep_model = streptococcus_metrics.model_prediction(
+        strep_model = single_strep_predictions(
             values_list=[2.591, 0.992, 4.415, 3.1925], target_data=4.106)
         return jsonify({
             "data": {
@@ -70,10 +58,8 @@ def strep_pred():
 
 @app.route("/lact", methods=["GET", "POST"])
 def lact_pred():
-    lactobacillus_metrics = LactobacillusRegression(
-        path="data/beta_dataset.csv")
     if request.method == "POST":
-        lact_model = lactobacillus_metrics.model_prediction(
+        lact_model = single_lact_predictions(
             values_list=[2.591, 0.992, 4.415, 3.1925], target_data=5.196)
         return jsonify({
             "data": {
@@ -85,7 +71,7 @@ def lact_pred():
 
 
 """
-Big predictions, for ploting
+Big predictions, for plotting
 """
 
 
@@ -94,7 +80,7 @@ def list_strep_pred():
     if request.method == "POST":
         list_pred = request.json["strep_values"]
         list_target = request.json["strep_target"]
-        values_predicted = make_strep_predictions(list_pred, list_target)
+        values_predicted = list_strep_predictions(list_pred, list_target)
         return jsonify({
             "data": values_predicted
         })
@@ -109,7 +95,7 @@ def list_lact_pred():
     if request.method == "POST":
         list_predict = request.json["lact_values"]
         list_target = request.json["lact_target"]
-        values_predicted = make_lact_predictions(list_predict, list_target)
+        values_predicted = list_lact_predictions(list_predict, list_target)
         return jsonify({
             "data": values_predicted
         })
@@ -128,13 +114,13 @@ Neuron classification
 @app.route("/classification_single", methods=["GET", "POST"])
 def classification():
     """In this endpoint the goal is sent a single values"""
-    
+
     if request.method == "POST":
         features_data = np.array(request.json["features_data"]).reshape(1, -1)
         # target_data = np.array(request.json["target_data"])
         model_class = measure_single_predictions(features_data)
         return jsonify({
-            "message":"successfully",
+            "message": "successfully",
             "status_code": 200,
             "predictions": model_class
         })
@@ -144,16 +130,17 @@ def classification():
             "status_code": 404
         })
 
+
 @app.route("/classification_multiple", methods=["GET", "POST"])
 def classification():
     """In this endpoint the goal is sent a single values"""
-    
+
     if request.method == "POST":
         features_data = np.array(request.json["features_data"])
         # target_data = np.array(request.json["target_data"])
         model_class = measure_list_predictions(features_data)
         return jsonify({
-            "message":"successfully",
+            "message": "successfully",
             "status_code": 200,
             "predictions": model_class
         })
@@ -178,7 +165,24 @@ def classification():
 
 
 # Lactobacillus testing
+{
+    "lact_values":[
+        [2.654,1.015,4.488,1.0795]
+        [2.65,1.096,4.459,2.444]
+        [2.502,1.156,4.555,1.4788]
+        [2.51,0.995,4.496,2.3514]
+        [2.643,1.034,4.495,3.0312]
+        [2.624,0.988,4.595,3.3141]
+        [2.414,1.097,4.556,1.8533]
+        [2.659,0.964,4.412,1.8671]
+        [2.602,1.15,4.431,3.8777]
+        [2.591,0.992,4.415,3.1925]
+        [2.576,1.048,4.544,3.9445]]
+    ,
+    "lact_target":[4.833, 5.562, 4.466, 4.195, 4.688, 4.071, 4.889, 4.539, 5.245, 5.196, 4.194]
+}
 
+# streptococcus testing
 {
     "strep_values":[
         [2.654,1.015,4.488,1.0795]

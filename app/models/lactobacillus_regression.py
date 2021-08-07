@@ -15,7 +15,8 @@ import numpy as np
 import os
 
 
-def make_lact_predictions(test_values: list, target_values: list):
+# for single predictions.
+def list_lact_predictions(test_values: list, target_values: list):
     """
     :param test_values: this need to be a list of list of floating values.
     :param target_values: the goal to measure the accuracy.
@@ -41,6 +42,33 @@ def make_lact_predictions(test_values: list, target_values: list):
         return {
             "message": "Error by: {}".format(str(e))
         }
+
+
+# for complex predictions
+def single_lact_predictions(values_list: list, target_data: float):
+
+    with open("model_training/lact_model.json", "r") as json_file:
+        loaded_model_json = json_file.read()
+
+    model_loaded = model_from_json(loaded_model_json)
+
+    # Loading weighs
+    model_loaded.load_weights("model_training/lact_model.h5")
+
+    # Making another evaluation
+    model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
+                         loss="mse",
+                         metrics=["mae"])
+
+    pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
+    histories = pd.read_csv("model_training/all_mae_avg_lact.csv")
+
+    return {
+        "prediction_range": "{0:.2f}%".format(
+            (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
+            (pred_range[0][0] / target_data) * 100),
+        "mean_absolute_error": [x for x in histories["0"].to_numpy()]
+    }
 
 
 class LactobacillusRegression:
@@ -121,28 +149,3 @@ class LactobacillusRegression:
 
         model.save_weights("model_training/lact_model.h5")
         pd.DataFrame(all_histories).mean(axis=0).to_csv("model_training/all_mae_avg_lact.csv", index=False)
-
-    def model_prediction(self, values_list: list, target_data: float):
-
-        with open("model_training/lact_model.json", "r") as json_file:
-            loaded_model_json = json_file.read()
-
-        model_loaded = model_from_json(loaded_model_json)
-
-        # Loading weighs
-        model_loaded.load_weights("model_training/lact_model.h5")
-
-        # Making another evaluation
-        model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
-                             loss="mse",
-                             metrics=["mae"])
-
-        pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
-        histories = pd.read_csv("model_training/all_mae_avg_lact.csv")
-
-        return {
-            "prediction_range": "{0:.2f}%".format(
-                (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
-                (pred_range[0][0] / target_data) * 100),
-            "mean_absolute_error": [x for x in histories["0"].to_numpy()]
-        }
