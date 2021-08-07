@@ -25,7 +25,6 @@ import numpy as np
 """In every GET petitions the data trained and 
     the history metrics will be sent"""
 
-
 @app.cli.command()
 def tst():
     tests = unittest.TestLoader().discover("tests")

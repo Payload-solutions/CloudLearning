@@ -19,3 +19,4 @@ CORS(app)
 
 # import features
 from app import routes
+from app.errors import errors
