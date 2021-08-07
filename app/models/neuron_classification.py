@@ -1,3 +1,6 @@
+import json
+from typing import Any
+from numpy.core.fromnumeric import shape
 import pandas as pd
 from tensorflow.keras import (
     models,
@@ -8,6 +11,8 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import (
     to_categorical
 )
+import os
+import numpy as np
 
 
 class NeuronClassification:
@@ -25,23 +30,37 @@ class NeuronClassification:
         self.epochs_number = epochs_number
         self.input_shape_val = input_shape_val
         self.output_shape_val = output_shape_val
+        self.train_data, self.test_data, self.train_labels, self.test_labels = self._defining_data_split()
+
+        """
+        The values are transformed from plain text to numeric categorical
+        using this function:
+            y_train = LabelEncoder().fit_transform(y_train)
+            y_test = LabelEncoder().fit_transform(y_test)
+
+            train_labels, test_labels = to_categorical(y_train), to_categorical(y_test)
+            # now the data is ready to be transformed, because the data is floating
+        """
+
+        if not os.path.exists("model_training/classification_model.json"):
+            self._defining_model()
 
     def _defining_data_split(self):
-        X, y = self.data_master.drop("", axis=1), self.data_master[""]
+        X, y = self.data_master.drop(["quality_product", "quality_product_"], axis=1), self.data_master[
+            "quality_product_"]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
         train_data, test_data = X_train.to_numpy(), X_test.to_numpy()
         train_labels, test_labels = to_categorical(y_train), to_categorical(y_test)
 
         return train_data, test_data, train_labels, test_labels
 
-    def _defining_model(self):
-        train_data, test_data, train_labels, test_labels = self._defining_data_split()
+    def _defining_model(self) -> None:
 
-        x_val = train_data[:int(len(train_data) * 0.32)]
-        partial_x_train = train_data[int(len(train_data) * 0.32):]
+        x_val = self.train_data[:int(len(self.train_data) * 0.32)]
+        partial_x_train = self.train_data[int(len(self.train_data) * 0.32):]
 
-        y_val = train_labels[:int(len(train_labels) * 0.32)]
-        partial_y_train = train_labels[int(len(train_labels) * 0.32):]
+        y_val = self.train_labels[:int(len(self.train_labels) * 0.32)]
+        partial_y_train = self.train_labels[int(len(self.train_labels) * 0.32):]
 
         model = models.Sequential()
         model.add(layers.Dense(64, activation="relu", input_shape=(self.input_shape_val,)))
@@ -54,19 +73,49 @@ class NeuronClassification:
                             epochs=self.epochs_number,
                             batch_size=512, verbose=False,
                             validation_data=(x_val, y_val))
+        json_model = model.to_json()
+        print(history.history)
 
-        return {
-            "history": history,
-            "test_data": test_data,
-            "test_labels": test_labels,
-            "model": model,
-        }
+        # saving the classification model
+        with open("model_training/classification_model.json", "w") as json_file:
+            json_file.write(json_model)
 
-    def get_metrics(self) -> float:
-        metrics_vals = self._defining_model()
-        data_test = metrics_vals["test_data"]
-        label_test = metrics_vals["test_labels"]
-        model = metrics_vals["model"]
+        # serializing the data
+        model.save_weights("model_training/classification_weights.h5")
 
-        accuracy_metric = float("{0:.2f}%".format(model.evaluate(data_test, label_test)[1] * 100))
-        return accuracy_metric
+        # saving the history variable
+        with open("model_training/classification_history.json", "w") as history_file:
+            json.dump(history.history, history_file)
+
+    def measure_predictions(self, features_value: np.ndarray, target_value: np.ndarray) -> Any:
+
+        try:
+
+            if features_value.shape == (len(features_value), 9) or features_value.shape == (1, 9):
+
+                with open("model_training/classification_model.json") as json_file:
+                    loaded_model = json_file.read()
+
+                model_loaded = model_from_json(loaded_model)
+
+                # Loading weights
+                model_loaded.load_weights("model_training/classification_weights.h5")
+
+                # making another evaluation
+                model_loaded.compile(optimizer="rmsprop",
+                                    loss="categorical_crossentropy",
+                                    metrics=["accuracy"])
+
+                # accuracy prediction
+                accuracy_metric = float("{0:.2f}".format(model_loaded.evaluate(np.array(features_value), np.array(target_value))[1] * 100))
+
+                return {
+                    "accuracy_metrics": accuracy_metric,
+                }
+
+            else:
+                raise ValueError("The dimension in the features is not the right")
+        except ValueError as e:
+            return {
+                "message": "Error by: {}".format(str(e))
+            }

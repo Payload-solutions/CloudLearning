@@ -12,12 +12,19 @@ from app.models.lactobacillus_regression import (
     LactobacillusRegression,
     make_lact_predictions
 )
+import unittest
+import numpy as np
 
+
+
+@app.cli.command()
+def tst():
+    tests = unittest.TestLoader().discover("tests")
+    unittest.TextTestRunner().run(tests)
 
 """
-Individuals predictions
+Neuron Regression
 """
-
 
 @app.route("/strep", methods=["GET", "POST"])
 def strep_pred():
@@ -85,6 +92,25 @@ def list_lact_pred():
             "message": "you suck!!",
             "status_code": 404
         })
+
+
+
+"""
+Neuron classification
+"""
+
+
+@app.route("/classification", methods=["GET", "POST"])
+def classification():
+    if request.method == "POST":
+        features_data = request.json["features_data"]
+        target_data = request.json["target_data"]
+    else:
+        pass
+
+
+
+
 
 
 """
