@@ -13,6 +13,12 @@ const Header = () => (
                 <a href="/about">About us</a>
             </div>
         </div>
+        <ul>
+            <li><a href="/about">About us</a></li>
+            <li><a href="/tables">Datos generales</a></li>
+            <li><a href="/values">Valores</a></li>
+            <li><a href="/about">About us</a></li>
+        </ul>
     </header>
 );
 
