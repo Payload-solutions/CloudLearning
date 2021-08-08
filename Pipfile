@@ -15,6 +15,7 @@ matplotlib = "*"
 seaborn = "*"
 flask-cors = "*"
 tensorflow = "*"
+flask-testing = "*"
 
 [dev-packages]
 autopep8 = "*"

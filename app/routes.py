@@ -25,6 +25,7 @@ import numpy as np
 """In every GET petitions the data trained and 
     the history metrics will be sent"""
 
+
 @app.cli.command()
 def tst():
     tests = unittest.TestLoader().discover("tests")
@@ -89,6 +90,7 @@ def lact_pred():
             }
         })
 
+
 """
 Big predictions, for plotting
 """
@@ -103,7 +105,7 @@ def list_strep_pred():
         return jsonify({
             "data": values_predicted
         })
-    else:
+    elif request.method == "GET":
         response = make_response(redirect("/bacteria_growth"))
         return response
 
@@ -148,13 +150,10 @@ def classification_single():
 
 @app.route("/classification_multiple", methods=["GET", "POST"])
 def classification_multiple():
-
-    
-    
     if request.method == "POST":
         features_data = request.json["classification_data"]
         target_data = request.json["predictions"]
-    
+
         model_class = measure_list_predictions(features_value=features_data, targets_value=target_data)
         return jsonify({
             "message": "successfully",

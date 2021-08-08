@@ -14,19 +14,24 @@ import os
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
-with open("model_training/classification_history.json", "r") as json_file:
-    value = json.load(json_file)
+
+def getting_history() -> Any:
+    with open("model_training/classification_history.json", "r") as json_file:
+        value = json.load(json_file)
+    return value
+
 
 MEASURES = {
-        0: "Low fat yogurt",
-        1: "Non fat yogurt",
-        2: "Regular yogurt",
+    0: "Low fat yogurt",
+    1: "Non fat yogurt",
+    2: "Regular yogurt",
 }
 
 
 # single prediction
-def measure_single_predictions(features_value= None) -> Any:
+def measure_single_predictions(features_value=None) -> Any:
     try:
+        value = getting_history()
         if features_value is not None:
 
             with open("model_training/classification_model.json") as json_file:
@@ -43,15 +48,15 @@ def measure_single_predictions(features_value= None) -> Any:
                                  metrics=["accuracy"])
 
             prediction = model_loaded.predict(features_value)
-            
+
             return {
                 "accuracy_metrics": MEASURES[np.argmax(prediction)]
             }
 
         else:
             return {
-                "values":value
-                }
+                "values": value
+            }
     except ValueError as e:
         return {
             "message": "Error by: {}".format(str(e))
@@ -62,8 +67,9 @@ def measure_single_predictions(features_value= None) -> Any:
 def measure_list_predictions(features_value=None, targets_value=None) -> Any:
     try:
 
+        value = getting_history()
         if (features_value is not None) and (targets_value is not None):
-            
+
             features_value = np.array(features_value)
             with open("model_training/classification_model.json") as json_file:
                 loaded_model = json_file.read()
@@ -87,13 +93,13 @@ def measure_list_predictions(features_value=None, targets_value=None) -> Any:
 
             return {
                 "predictions": [MEASURES[np.argmax(x)] for x in prediction],
-                "accuracy": "{0:.2f}%".format(accuracy_val[1]*100),
+                "accuracy": "{0:.2f}%".format(accuracy_val[1] * 100),
             }
 
         else:
             return {
-                "values":value
-                }
+                "values": value
+            }
     except ValueError as e:
         return {
             "message": "Error by: {}".format(str(e))

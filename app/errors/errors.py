@@ -1,6 +1,7 @@
 from app import app
 from flask import jsonify
 
+
 @app.errorhandler(400)
 def not_allowed(error):
     return jsonify({
@@ -8,6 +9,7 @@ def not_allowed(error):
         "error_type": "not allowed",
         "status_code": 400
     })
+
 
 @app.errorhandler(401)
 def unauthorized(error):
@@ -26,6 +28,7 @@ def forbidden(error):
         "status_code": 403
     })
 
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({
@@ -33,6 +36,7 @@ def not_found(error):
         "error_type": "not found",
         "status_code": 404
     })
+
 
 @app.errorhandler(405)
 def method_not_allowed(error):
