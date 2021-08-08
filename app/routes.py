@@ -1,9 +1,7 @@
 from app import app
 from flask import (
     jsonify,
-    request,
-    make_response,
-    redirect
+    request
 )
 import pandas as pd
 from app.models.streptococcus_regression import (
@@ -51,42 +49,42 @@ Neuron Regression
 
 @app.route("/strep", methods=["GET", "POST"])
 def strep_pred():
-    strep_model = single_strep_predictions(
-        values_list=[2.591, 0.992, 4.415, 3.1925], target_data=4.106)
+    
     if request.method == "POST":
+        strep_model = single_strep_predictions(
+            values_list=request.json["strep_value"], target_data=request.json["strep_single_target"])
         return jsonify({
             "data": {
                 "message": "request successfully",
-                "prediction": strep_model["prediction_range"],
-                "mean_absolute_error": strep_model["mean_absolute_error"]
+                "prediction": strep_model["prediction_range"]
             }
         })
     elif request.method == "GET":
         return jsonify({
             "data": {
                 "message": "request successfully",
-                "mean_absolute_error": strep_model["mean_absolute_error"]
+                "mean_absolute_error": single_strep_predictions()["mean_absolute_error"]
             }
         })
 
 
 @app.route("/lact", methods=["GET", "POST"])
 def lact_pred():
-    lact_model = single_lact_predictions(
-        values_list=[2.591, 0.992, 4.415, 3.1925], target_data=5.196)
+   
     if request.method == "POST":
+        lact_model = single_lact_predictions(
+            values_list=request.json["lact_value"], target_data=request.json["lact_single_target"])
         return jsonify({
             "data": {
                 "message": "request successfully",
                 "prediction": lact_model["prediction_range"],
-                "mean_absolute_error": lact_model["mean_absolute_error"]
             }
         })
     elif request.method == "GET":
         return jsonify({
             "data": {
                 "message": "request successfully",
-                "mean_absolute_error": lact_model["mean_absolute_error"]
+                "mean_absolute_error": single_lact_predictions()["mean_absolute_error"]
             }
         })
 
@@ -101,27 +99,30 @@ def list_strep_pred():
     if request.method == "POST":
         list_pred = request.json["strep_values"]
         list_target = request.json["strep_target"]
-        values_predicted = list_strep_predictions(list_pred, list_target)
+        values_predicted = list_strep_predictions(test_values=list_pred, target_values=list_target)
         return jsonify({
             "data": values_predicted
         })
     elif request.method == "GET":
-        response = make_response(redirect("/bacteria_growth"))
-        return response
+        return jsonify({
+            "data": list_strep_predictions()["mean_absolute_error"]
+        })
 
 
 @app.route("/list_lact", methods=["GET", "POST"])
 def list_lact_pred():
+    
     if request.method == "POST":
         list_predict = request.json["lact_values"]
         list_target = request.json["lact_target"]
-        values_predicted = list_lact_predictions(list_predict, list_target)
+        values_predicted = list_lact_predictions(test_values=list_predict, target_values=list_target)
         return jsonify({
             "data": values_predicted
         })
     elif request.method == "GET":
-        response = make_response(redirect("/bacteria_growth"))
-        return response
+        return jsonify({
+            "data": list_lact_predictions()["mean_absolute_error"]
+        })
 
 
 """
@@ -135,7 +136,6 @@ def classification_single():
 
     if request.method == "POST":
         features_data = np.array(request.json["classification_data"]).reshape(1, -1)
-        # target_data = np.array(request.json["target_data"])
         model_class = measure_single_predictions(features_data)
         return jsonify({
             "message": "successfully",

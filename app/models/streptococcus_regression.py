@@ -12,58 +12,69 @@ import numpy as np
 import os
 
 
-def list_strep_predictions(test_values: list, target_values: list):
+def list_strep_predictions(test_values=None, target_values=None):
     """
     :param test_values: this need to be a list of list of floating values.
     :param target_values: the goal to measure the accuracy.
     :return: a dictionary object with the values inside.
     """
+    histories = pd.read_csv("model_training/all_mae_avg_strep.csv")
+    if test_values is not None and target_values is not None:
 
-    try:
+        try:
+            with open("model_training/strep_model.json", "r") as json_file:
+                loaded_model_json = json_file.read()
+
+            model_loaded = model_from_json(loaded_model_json)  # Model Loaded
+            # Loading model with its respective weights
+            model_loaded.load_weights("model_training/strep_model.h5")
+            model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
+                                loss="mse",
+                                metrics=["mae"])
+            predictions = model_loaded.predict(np.array(test_values))
+            return {
+                "predictions": [x[0] for x in predictions.tolist()],
+                "targets": target_values
+            }
+        except ValueError as e:
+            return {
+                "error_message": "Error by: {}".format(str(e))
+            }
+    else:
+        return {
+            "mean_absolute_error":  histories["0"].to_list()
+        }
+
+def single_strep_predictions(values_list=None, target_data=None):
+    histories = pd.read_csv("model_training/all_mae_avg_strep.csv")
+
+    if values_list is not None and target_data is not None:
         with open("model_training/strep_model.json", "r") as json_file:
             loaded_model_json = json_file.read()
 
-        model_loaded = model_from_json(loaded_model_json)  # Model Loaded
-        # Loading model with its respective weights
+        model_loaded = model_from_json(loaded_model_json)
+
+        # Loading weights
         model_loaded.load_weights("model_training/strep_model.h5")
+
+        # Making another evaluation
         model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
-                             loss="mse",
-                             metrics=["mae"])
-        predictions = model_loaded.predict(np.array(test_values))
+                            loss="mse",
+                            metrics=["mae"])
+
+        pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
+        
+
         return {
-            "predictions": [x[0] for x in predictions.tolist()],
-            "targets": target_values
+            "prediction_range": "{0:.2f}%".format(
+                (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
+                (pred_range[0][0] / target_data) * 100),
+            
         }
-    except ValueError as e:
+    else:
         return {
-            "error_message": "Error by: {}".format(str(e))
+            "mean_absolute_error":  histories["0"].to_list()
         }
-
-
-def single_strep_predictions(values_list: list, target_data: float):
-
-    with open("model_training/strep_model.json", "r") as json_file:
-        loaded_model_json = json_file.read()
-
-    model_loaded = model_from_json(loaded_model_json)
-
-    # Loading weights
-    model_loaded.load_weights("model_training/strep_model.h5")
-
-    # Making another evaluation
-    model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
-                         loss="mse",
-                         metrics=["mae"])
-
-    pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
-    histories = pd.read_csv("model_training/all_mae_avg_strep.csv")
-
-    return {
-        "prediction_range": "{0:.2f}%".format(
-            (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
-            (pred_range[0][0] / target_data) * 100),
-        "mean_absolute_error": [x for x in histories["0"].to_numpy()]
-    }
 
 
 class StreptococcusRegression:
