@@ -78,10 +78,8 @@ def single_strep_predictions(values_list=None, target_data=None):
 
 
 class StreptococcusRegression:
-
     def __init__(self, path: str) -> None:
         self.data_master = pd.read_csv(path)
-        
         if not os.path.exists("model_training/strep_model.json"):
             self.defining_model_strep(4, 0.0155)
 
@@ -102,11 +100,9 @@ class StreptococcusRegression:
         train_data = train_data - mean
         standard = train_data.std(axis=0)
         train_data = train_data / standard
-
         # Normalizing test data
         test_data = test_data - mean
         test_data = test_data / standard
-
         return train_data, test_data, y_train, y_test
 
     def defining_model_strep(self, input_data: int, learning_rate_val: float) -> None:
@@ -156,7 +152,5 @@ class StreptococcusRegression:
         with open("model_training/strep_model.json", "w") as json_file:
             json_file.write(json_model)
 
-        # Serializing the weights TO HDF5
         model.save_weights("model_training/strep_model.h5")
         pd.DataFrame(all_histories).mean(axis=0).to_csv("model_training/all_mae_avg_strep.csv", index=False)
-        # return model, all_histories

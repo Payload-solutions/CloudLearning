@@ -63,7 +63,7 @@ def measure_single_predictions(features_value=None) -> Any:
         }
 
 
-# single prediction
+# list prediction
 def measure_list_predictions(features_value=None, targets_value=None) -> Any:
     try:
 
@@ -121,16 +121,6 @@ class NeuronClassification:
         self.input_shape_val = input_shape_val
         self.output_shape_val = output_shape_val
         self.train_data, self.test_data, self.train_labels, self.test_labels = self._defining_data_split()
-
-        """
-        The values are transformed from plain text to numeric categorical
-        using this function:
-            y_train = LabelEncoder().fit_transform(y_train)
-            y_test = LabelEncoder().fit_transform(y_test)
-
-            train_labels, test_labels = to_categorical(y_train), to_categorical(y_test)
-            # now the data is ready to be transformed, because the data is floating
-        """
 
         if not os.path.exists("model_training/classification_model.json"):
             self._defining_model()
