@@ -1,21 +1,23 @@
 """
 :author Arturo Negreiros
 :date 10 August
-[all routes]: {
-	/bacteria_growth
-	/strep
-	/lact
-	/list_strep
-	/list_lact
-	/classification_single
-	/classification_multiple
-}
+    [all routes]:
+        /bacteria_growth
+        /strep
+        /lact
+        /list_strep
+        /list_lact
+        /classification_single
+        /classification_multiple
+
 """
 
 from app import app
 from flask import (
     jsonify,
-    request
+    request,
+    make_response,
+    redirect
 )
 import pandas as pd
 from app.models.streptococcus_regression import (
@@ -44,26 +46,23 @@ def tst():
     unittest.TextTestRunner().run(tests)
 
 
+@app.route("/")
+def index():
+    response = make_response(redirect("/bacteria_growth"))
+    return response
+
+
 @app.route("/bacteria_growth", methods=["GET"])
 def bacteria_growth():
-    bacteria_data = pd.read_csv("data/growth_curve.csv")
+    data = pd.read_csv("data/growth_curve.csv")
+    elements = [{"time": time_, "bacteria": bacteria, "id": index_+1} for index_, (time_, bacteria) in enumerate(zip(data["time"].to_list(), data["growth_log"].to_list()))]
     return jsonify({
-        "data": {
-            "message": "Something",
-            "growth_time": bacteria_data["time"].to_list(),
-            "growth_log": bacteria_data["growth_log"].to_list()
-        }
+        "data": elements
     })
-
-
-"""
-Neuron Regression
-"""
 
 
 @app.route("/strep", methods=["GET", "POST"])
 def strep_pred():
-    
     if request.method == "POST":
         strep_model = single_strep_predictions(
             values_list=request.json["strep_value"], target_data=request.json["strep_single_target"])
@@ -84,7 +83,6 @@ def strep_pred():
 
 @app.route("/lact", methods=["GET", "POST"])
 def lact_pred():
-   
     if request.method == "POST":
         lact_model = single_lact_predictions(
             values_list=request.json["lact_value"], target_data=request.json["lact_single_target"])
@@ -101,11 +99,6 @@ def lact_pred():
                 "mean_absolute_error": single_lact_predictions()["mean_absolute_error"]
             }
         })
-
-
-"""
-Big predictions, for plotting
-"""
 
 
 @app.route("/list_strep", methods=["GET", "POST"])
@@ -125,7 +118,6 @@ def list_strep_pred():
 
 @app.route("/list_lact", methods=["GET", "POST"])
 def list_lact_pred():
-    
     if request.method == "POST":
         list_predict = request.json["lact_values"]
         list_target = request.json["lact_target"]
@@ -137,11 +129,6 @@ def list_lact_pred():
         return jsonify({
             "data": list_lact_predictions()["mean_absolute_error"]
         })
-
-
-"""
-Neuron classification
-"""
 
 
 @app.route("/classification_single", methods=["GET", "POST"])
@@ -180,8 +167,3 @@ def classification_multiple():
             "status_code": 200,
             "predictions": measure_list_predictions()
         })
-
-
-
-
-

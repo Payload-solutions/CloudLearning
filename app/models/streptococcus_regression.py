@@ -29,8 +29,8 @@ def list_strep_predictions(test_values=None, target_values=None):
             # Loading model with its respective weights
             model_loaded.load_weights("model_training/strep_model.h5")
             model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
-                                loss="mse",
-                                metrics=["mae"])
+                                 loss="mse",
+                                 metrics=["mae"])
             predictions = model_loaded.predict(np.array(test_values))
             return {
                 "predictions": [x[0] for x in predictions.tolist()],
@@ -42,8 +42,9 @@ def list_strep_predictions(test_values=None, target_values=None):
             }
     else:
         return {
-            "mean_absolute_error":  histories["0"].to_list()
+            "mean_absolute_error": histories["0"].to_list()
         }
+
 
 def single_strep_predictions(values_list=None, target_data=None):
     histories = pd.read_csv("model_training/all_mae_avg_strep.csv")
@@ -59,21 +60,20 @@ def single_strep_predictions(values_list=None, target_data=None):
 
         # Making another evaluation
         model_loaded.compile(optimizer=optimizers.RMSprop(learning_rate=0.0155),
-                            loss="mse",
-                            metrics=["mae"])
+                             loss="mse",
+                             metrics=["mae"])
 
         pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
-        
 
         return {
             "prediction_range": "{0:.2f}%".format(
                 (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
                 (pred_range[0][0] / target_data) * 100),
-            
+
         }
     else:
         return {
-            "mean_absolute_error":  histories["0"].to_list()
+            "mean_absolute_error": histories["0"].to_list()
         }
 
 
@@ -86,8 +86,9 @@ class StreptococcusRegression:
     def split_data(self):
         y_strep = self.data_master["streptococcus_initial_strain_cfu_ml"]
 
-        X = self.data_master.drop(["streptococcus_initial_strain_cfu_ml", "lactobacillus_initial_strain_cfu_ml", "quality_product",
-                                   "ideal_temperature_c"], axis=1)
+        X = self.data_master.drop(
+            ["streptococcus_initial_strain_cfu_ml", "lactobacillus_initial_strain_cfu_ml", "quality_product",
+             "ideal_temperature_c"], axis=1)
 
         X_train, X_test, y_train, y_test = train_test_split(
             X, y_strep, test_size=0.3, random_state=42)
