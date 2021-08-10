@@ -15,7 +15,7 @@ const App = () => (
                 <Route exact path="/values" component={Values} />
                 <Route exact path="/about" component={About} />
                 <Route exact path="/tables" component={Tables}/>
-                <Route exact path="/upload" component={Upload} />
+                {/* <Route exact path="/upload" component={Upload} /> */}
             </Switch>
         </Layout>
     </BrowserRouter>
