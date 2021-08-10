@@ -6,6 +6,7 @@ import About from '../components/About';
 import Layout from '../components/Layout';
 import Tables from '../containers/Tables';
 import Upload from '../containers/Upload';
+import TestValues from '../containers/TestValues';
 
 const App = () => (
     <BrowserRouter>
@@ -15,7 +16,7 @@ const App = () => (
                 <Route exact path="/values" component={Values} />
                 <Route exact path="/about" component={About} />
                 <Route exact path="/tables" component={Tables}/>
-                {/* <Route exact path="/upload" component={Upload} /> */}
+                <Route exact path="/test" component={TestValues} />
             </Switch>
         </Layout>
     </BrowserRouter>

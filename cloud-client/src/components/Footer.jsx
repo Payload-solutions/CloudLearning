@@ -6,8 +6,7 @@ import twitterIcon from '../assets/static/twitter.png'
 const Footer = () => (
   <footer className="footer">
     <a href="https://github.com/Arturo0911"><img src={githubIcon} /></a>
-    <a href="/"><img src={twitterIcon}  alt="" /></a>
-    <a href="/">Centro de ayuda</a>
+    <a href="https://twitter.com/DevTuron"><img src={twitterIcon}  alt="" /></a>
   </footer>
 );
 

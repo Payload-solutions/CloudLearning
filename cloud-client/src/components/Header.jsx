@@ -17,6 +17,9 @@ const Header = () => (
             <div className="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                 <ul className="navbar-nav ml-auto">
                     <li className="nav-item">
+                        <a className="nav-link active" aria-current="page" href="/test">Pruebas</a>
+                    </li>
+                    <li className="nav-item">
                         <a className="nav-link active" aria-current="page" href="/values">Estadísticas</a>
                     </li>
                     <li className="nav-item">
