@@ -1,3 +1,17 @@
+"""
+:author Arturo Negreiros
+:date 10 August
+[all routes]: {
+	/bacteria_growth
+	/strep
+	/lact
+	/list_strep
+	/list_lact
+	/classification_single
+	/classification_multiple
+}
+"""
+
 from app import app
 from flask import (
     jsonify,
@@ -166,3 +180,8 @@ def classification_multiple():
             "status_code": 200,
             "predictions": measure_list_predictions()
         })
+
+
+
+
+
