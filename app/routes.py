@@ -61,11 +61,12 @@ def bacteria_growth():
 
 @app.route("/charting", methods=["GET"])
 def charting():
+    mae_lact = [{"x":int(inx + 1), "y": value} for inx, value in enumerate(single_lact_predictions()["mean_absolute_error"])]
     if request.method == "GET":
         return jsonify({
             "message": "request successfully",
             "maestrep": single_strep_predictions()["mean_absolute_error"],
-            "maelact": single_lact_predictions()["mean_absolute_error"],
+            "maelact": mae_lact,
             "classification": measure_single_predictions()["values"]
         })
 

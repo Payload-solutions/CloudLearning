@@ -16,7 +16,7 @@ const Chartvalues = () => {
             .then(data => Setaccuracies(data.classification.accuracy) || Setlosses(data.classification.loss) ||
                 Setmaelacts(data.maelact) || Setmaestrep(data.maestrep))
     }, [])
-    console.log(maestrep[0]);
+    console.log(maelacts);
 
     let labelStack = [];
 
@@ -41,8 +41,34 @@ const Chartvalues = () => {
         ]
     }
 
+    const lactState = {
+        datasets: [{
+          label: 'Scatter Dataset',
+          data: maelacts,
+          backgroundColor: 'rgb(255, 99, 132)'
+        }],
+      };
+
     return (
         <div className="container p-4">
+            <div className="row">
+                <div className="col-md-12">
+                    <div className="card">
+                        <div className="card-header">
+                            <h5 className="card-title">
+                                Error medio absoluto
+                            </h5>
+                        </div>
+                        <div className="card-body">
+                            <p className="card-text">
+                                Podemos apredciar, la cantidad de ruido que genera el error medio absoluto.
+                                En varios entrenamientos reaelizados, con esta cantidad de valores podemos generar varias predicciones
+                                acertadas, ya que con este entrenamiento evitamos el overfitting y el underfitting.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <Line
                 data={state}
                 options={{
@@ -57,8 +83,10 @@ const Chartvalues = () => {
                     }
                 }}
             />
+            
+
             <Line
-                data={state}
+                data={lactState}
                 options={{
                     title: {
                         display: true,
