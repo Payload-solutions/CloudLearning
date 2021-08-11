@@ -5,7 +5,7 @@ import Values from '../containers/Values';
 import About from '../components/About';
 import Layout from '../components/Layout';
 import Tables from '../containers/Tables';
-import Upload from '../containers/Upload';
+import Chartvalues from '../containers/Chartvalues';
 import TestValues from '../containers/TestValues';
 
 const App = () => (
@@ -17,6 +17,7 @@ const App = () => (
                 <Route exact path="/about" component={About} />
                 <Route exact path="/tables" component={Tables}/>
                 <Route exact path="/test" component={TestValues} />
+                <Route exact path="/charting" component={Chartvalues}></Route>
             </Switch>
         </Layout>
     </BrowserRouter>

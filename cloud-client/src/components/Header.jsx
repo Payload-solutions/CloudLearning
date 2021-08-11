@@ -23,6 +23,9 @@ const Header = () => (
                         <a className="nav-link active" aria-current="page" href="/values">Estadísticas</a>
                     </li>
                     <li className="nav-item">
+                        <a className="nav-link" href="/charting">Gráficas</a>
+                    </li>
+                    <li className="nav-item">
                         <a className="nav-link" href="/tables">Tabla de contenido</a>
                     </li>
                     <li className="nav-item">
