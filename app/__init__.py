@@ -15,7 +15,7 @@ LactobacillusRegression(
         path="data/beta_dataset.csv")
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, support_credentials=True)
 
 # import features
 from app import routes

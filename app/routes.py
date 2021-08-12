@@ -43,6 +43,7 @@ def tst():
     unittest.TextTestRunner().run(tests)
 
 
+"""
 @app.route("/")
 def index():
     response = make_response(redirect("/bacteria_growth"))
@@ -57,7 +58,7 @@ def bacteria_growth():
     return jsonify({
         "data": elements
     })
-
+"""
 
 @app.route("/charting", methods=["GET"])
 def charting():
@@ -75,30 +76,50 @@ def charting():
 
 @app.route("/strep", methods=["POST"])
 def strep_pred():
-
-    print(request.json)
-    if request.method == "POST":
-        strep_model = single_strep_predictions(
-            values_list=request.json["strep_value"], target_data=request.json["strep_single_target"])
+    
+    try:
+        if request.method == "POST":
+            list_features = [float(request.json["minProteins"]),
+                            float(request.json["tritatableAcid"]), 
+                            float(request.json["phSour"]), 
+                            float(request.json["fatMilk"])]
+            strep_model = single_strep_predictions(
+                values_list=list_features, target_data=float(request.json["targetBacterian"]))
+            return jsonify({
+                "data": {
+                    "message": "request successfully",
+                    "prediction": strep_model,
+                }
+            })
+    except Exception as e:
+        print(e)
+        print("error: ",str(e))
         return jsonify({
-            "data": {
-                "message": "request successfully",
-                "prediction": strep_model["prediction_range"]
-            }
+            "message": "{}".format(str(e))
         })
 
 
 @app.route("/lact", methods=["POST"])
 def lact_pred():
     if request.method == "POST":
-        lact_model = single_lact_predictions(
-            values_list=request.json["lact_value"], target_data=request.json["lact_single_target"])
-        return jsonify({
-            "data": {
-                "message": "request successfully",
-                "prediction": lact_model["prediction_range"],
-            }
-        })
+        try:
+            list_features = [float(request.json["minProteins"]),
+                            float(request.json["tritatableAcid"]), 
+                            float(request.json["phSour"]), 
+                            float(request.json["fatMilk"])]
+            lact_model = single_lact_predictions(
+                values_list=list_features, target_data=float(request.json["targetBacterian"]))
+            return jsonify({
+                "data": {
+                    "message": "request successfully",
+                    "prediction": lact_model,
+                }
+            })
+        except Exception as e:
+            return jsonify({
+                "message": "Something error has ocurred",
+                "error": "Error in {}".format(str(e))
+            })
 
 
 @app.route("/list_strep", methods=["POST"])

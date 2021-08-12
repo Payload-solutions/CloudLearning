@@ -70,16 +70,15 @@ def single_lact_predictions(values_list=None, target_data=None):
 
         pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
         
-
         return {
             "prediction_range": "{0:.2f}%".format(
                 (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
-                (pred_range[0][0] / target_data) * 100)
-            # "mean_absolute_error":  histories["0"].to_numpy().to_list()
+                (pred_range[0][0] / target_data) * 100),
+            "value_predicted": pred_range[0][0].item()
         }
     else:
         return {
-            "mean_absolute_error":  histories["0"].to_list()
+            "mean_absolute_error":  histories["0"]
         }
 
 
@@ -161,3 +160,6 @@ class LactobacillusRegression:
 
         model.save_weights("model_training/lact_model.h5")
         pd.DataFrame(all_histories).mean(axis=0).to_csv("model_training/all_mae_avg_lact.csv", index=False)
+
+
+
