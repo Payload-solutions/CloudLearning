@@ -75,6 +75,8 @@ def charting():
 
 @app.route("/strep", methods=["POST"])
 def strep_pred():
+
+    print(request.json)
     if request.method == "POST":
         strep_model = single_strep_predictions(
             values_list=request.json["strep_value"], target_data=request.json["strep_single_target"])
