@@ -43,6 +43,10 @@ def tst():
     unittest.TextTestRunner().run(tests)
 
 
+
+
+
+
 """
 @app.route("/")
 def index():
@@ -76,12 +80,12 @@ def charting():
 
 @app.route("/strep", methods=["POST"])
 def strep_pred():
-    
+
     try:
         if request.method == "POST":
             list_features = [float(request.json["minProteins"]),
-                            float(request.json["tritatableAcid"]), 
-                            float(request.json["phSour"]), 
+                            float(request.json["tritatableAcid"]),
+                            float(request.json["phSour"]),
                             float(request.json["fatMilk"])]
             strep_model = single_strep_predictions(
                 values_list=list_features, target_data=float(request.json["targetBacterian"]))
@@ -104,8 +108,8 @@ def lact_pred():
     if request.method == "POST":
         try:
             list_features = [float(request.json["minProteins"]),
-                            float(request.json["tritatableAcid"]), 
-                            float(request.json["phSour"]), 
+                            float(request.json["tritatableAcid"]),
+                            float(request.json["phSour"]),
                             float(request.json["fatMilk"])]
             lact_model = single_lact_predictions(
                 values_list=list_features, target_data=float(request.json["targetBacterian"]))
