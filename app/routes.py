@@ -89,7 +89,7 @@ def strep_pred():
         return jsonify({
             "data": {
                 "message": "request successfully",
-                "prediction": strep_model,
+                "prediction": [strep_model],
             }
         })
     except Exception as e:

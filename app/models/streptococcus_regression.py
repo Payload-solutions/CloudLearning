@@ -33,6 +33,7 @@ def list_strep_predictions(test_values=None, target_values=None):
                                  metrics=["mae"])
             predictions = model_loaded.predict(np.array(test_values))
             return {
+                "index": 1,
                 "predictions": [x[0] for x in predictions.tolist()],
                 "targets": target_values
             }
@@ -66,6 +67,7 @@ def single_strep_predictions(values_list=None, target_data=None):
         pred_range = model_loaded.predict(np.array(values_list).reshape(1, -1))
 
         return {
+            "index": 1,
             "prediction_range": "{0:.2f}%".format(
                 (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
                 (pred_range[0][0] / target_data) * 100),
