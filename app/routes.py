@@ -35,6 +35,7 @@ from app.models.neuron_classification import (
 
 import unittest
 import numpy as np
+from pprint import pprint
 
 
 @app.cli.command()
@@ -83,6 +84,7 @@ def strep_pred():
 
     try:
         if request.method == "POST":
+            pprint(request.json)
             list_features = [float(request.json["minProteins"]),
                             float(request.json["tritatableAcid"]),
                             float(request.json["phSour"]),
@@ -106,6 +108,7 @@ def strep_pred():
 @app.route("/lact", methods=["POST"])
 def lact_pred():
     if request.method == "POST":
+        pprint(request.json)
         try:
             list_features = [float(request.json["minProteins"]),
                             float(request.json["tritatableAcid"]),
@@ -129,6 +132,7 @@ def lact_pred():
 @app.route("/list_strep", methods=["POST"])
 def list_strep_pred():
     if request.method == "POST":
+        pprint(request.json)
         list_pred = request.json["strep_values"]
         list_target = request.json["strep_target"]
         values_predicted = list_strep_predictions(test_values=list_pred, target_values=list_target)
@@ -140,6 +144,7 @@ def list_strep_pred():
 @app.route("/list_lact", methods=["POST"])
 def list_lact_pred():
     if request.method == "POST":
+        pprint(request.json)
         list_predict = request.json["lact_values"]
         list_target = request.json["lact_target"]
         values_predicted = list_lact_predictions(test_values=list_predict, target_values=list_target)
@@ -153,6 +158,7 @@ def classification_single():
     """In this endpoint the goal is sent a single values"""
 
     if request.method == "POST":
+        pprint(request.json)
         features_data = np.array(request.json["classification_data"]).reshape(1, -1)
         model_class = measure_single_predictions(features_data)
         return jsonify({
@@ -165,6 +171,7 @@ def classification_single():
 @app.route("/classification_multiple", methods=["POST"])
 def classification_multiple():
     if request.method == "POST":
+        pprint(request.json)
         features_data = request.json["classification_data"]
         target_data = request.json["predictions"]
 
