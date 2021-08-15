@@ -110,10 +110,11 @@ def lact_pred():
                          float(request.json["fatMilk"])]
         lact_model = single_lact_predictions(
             values_list=list_features, target_data=float(request.json["targetBacterian"]))
+        print(lact_model)
         return jsonify({
             "data": {
                 "message": "request successfully",
-                "prediction": lact_model,
+                "prediction": [lact_model],
             }
         })
     except Exception as e:
