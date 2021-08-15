@@ -71,7 +71,8 @@ def single_strep_predictions(values_list=None, target_data=None):
             "prediction_range": "{0:.2f}%".format(
                 (target_data / pred_range[0][0]) * 100) if pred_range > target_data else "{0:.2f}%".format(
                 (pred_range[0][0] / target_data) * 100),
-            "value_predicted": pred_range[0][0].item()
+            "value_predicted": pred_range[0][0].item(),
+            "target_data": target_data
 
         }
     else:
