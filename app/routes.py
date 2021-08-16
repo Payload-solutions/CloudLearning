@@ -152,14 +152,21 @@ def list_lact_pred():
 def classification_single():
     """In this endpoint the goal is sent a single values"""
 
-    if request.method == "POST":
-        pprint(request.json)
-        features_data = np.array(request.json["classification_data"]).reshape(1, -1)
-        model_class = measure_single_predictions(features_data)
-        return jsonify({
-            "message": "successfully",
-            "status_code": 200,
-            "predictions": model_class
+    elements_target = [float(request.json["streptococcusStrainInicial"]), float(request.json["lactobacillusStrainInicial"]), 
+                        float(request.json["idealTemperature"]),float(request.json["minProteins"]), 
+                        float(request.json["tritatableAcid"]), float(request.json["phSour"]),
+                        float(request.json["fatMilk"]), float(request.json["lactobacillusStrainFinal"]), 
+                        float(request.json["streptococcusStrainFinal"])]
+    pprint(request.json)
+    features_data = np.array(elements_target).reshape(1, -1)
+    model_class = measure_single_predictions(features_data)
+    return jsonify({
+            "response":[{
+                "message": "successfully",
+                "index":1 ,
+                "status_code": 200,
+                "predictions": model_class
+                }]
         })
 
 
@@ -172,7 +179,7 @@ def classification_multiple():
 
         model_class = measure_list_predictions(features_value=features_data, targets_value=target_data)
         return jsonify({
-            "message": "successfully",
+            "response":[{"message": "successfully",
             "status_code": 200,
-            "predictions": model_class
+            "predictions": model_class}]
         })
