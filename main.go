@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 
-	. "github.com/Arturo0911/CloudLearning/lacto"
+	//. "github.com/Arturo0911/CloudLearning/lacto"
+	"github.com/Arturo0911/CloudLearning/model"
 	"github.com/sjwhitworth/golearn/base"
 )
 
@@ -17,5 +18,6 @@ func yogurtPrediction() {
 
 func main() {
 	//yogurtPrediction()
-	GetXYMat()
+	//GetXYMat()
+	model.LinearModel()
 }
