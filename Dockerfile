@@ -1,23 +1,11 @@
-FROM python:3.9.6
+FROM golang:1.17.2
 
-RUN pip install --upgrade pip
-
-WORKDIR /neuronnetwork
-
-ENV FLASK_APP manage.py
-
-ENV FLASK_DEBUG=1
-
-ENV FLASK_ENV=development
-
-ENV FLASK_RUN_HOST 0.0.0.0
-
-COPY requirements.txt requirements.txt
-
-RUN pip install -r requirements.txt
-
-EXPOSE 5000
+WORKDIR $GOPATH/src/github.com/Arturo0911/CloudLearning
 
 COPY . .
 
-CMD ["flask", "run"]
+RUN go get -d -v ./...
+
+RUN go install -v ./...
+
+CMD ["CloudLearning"]
