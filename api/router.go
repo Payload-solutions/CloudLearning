@@ -1,15 +1,22 @@
 package api
 
 import (
-	//. "github.com/Arturo0911/CloudLearning/api/controllers"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
 func Router(router *gin.Engine) *gin.Engine {
 
-	//controller :=
-	router.Group("/regression").
+	router.Group("/regression", GetAllParameters).
 		GET("/")
+
+	router.Use(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, JSONResponse{
+			Success: false,
+			Message: "resource not found!",
+		})
+	})
 
 	return router
 }

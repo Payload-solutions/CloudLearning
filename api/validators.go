@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const DataSetPath = "neural_model/data/data_regression_set.csv"
+
 type JSONResponse struct {
 	Success bool   `json:"success"`
 	Error   string `json:"error,omitempty"`

@@ -1,8 +1,12 @@
 package api
 
 import (
+	"fmt"
+	"log"
 	"net/http"
+	"os"
 
+	//. "github.com/Arturo0911/CloudLearning/api"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,5 +29,28 @@ type ResponseBody struct {
 }
 
 func GetAllParameters(c *gin.Context) {
+
+	file, err := os.Open(DataSetPath)
+	if err != nil {
+		log.Fatalf("Error by %s", err)
+	}
+	defer file.Close()
+
+	dataset := dataframe
+	// reader := csv.NewReader(file)
+	// dataReader, err := reader.ReadAll()
+	// if err != nil {
+	// 	log.Fatalf("Error by %s", err)
+	// }
+
+	// for i, data := range dataReader {
+	// 	if i == 0 {
+	// 		continue
+	// 	}
+	// 	fmt.Println(data)
+	// 	break
+	// }
+
+	fmt.Println(dataReader)
 	c.JSON(http.StatusOK, RegressionControllers{})
 }
