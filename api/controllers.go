@@ -8,6 +8,7 @@ import (
 
 	//. "github.com/Arturo0911/CloudLearning/api"
 	"github.com/gin-gonic/gin"
+	"github.com/kniren/gota/dataframe"
 )
 
 type RegressionControllers struct {
@@ -36,7 +37,7 @@ func GetAllParameters(c *gin.Context) {
 	}
 	defer file.Close()
 
-	dataset := dataframe
+	dataset := dataframe.ReadCSV(file)
 	// reader := csv.NewReader(file)
 	// dataReader, err := reader.ReadAll()
 	// if err != nil {
@@ -51,6 +52,6 @@ func GetAllParameters(c *gin.Context) {
 	// 	break
 	// }
 
-	fmt.Println(dataReader)
+	fmt.Println(dataset)
 	c.JSON(http.StatusOK, RegressionControllers{})
 }
