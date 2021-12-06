@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 
-	//. "github.com/Arturo0911/CloudLearning/lacto"
-
 	//. "github.com/Arturo0911/CloudLearning/api"
 	"github.com/kniren/gota/dataframe"
 	"github.com/sjwhitworth/golearn/base"
